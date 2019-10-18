@@ -1,0 +1,53 @@
+from improvisation import Improvisation
+import live
+import os
+import time
+
+def go_live_ableton(song):
+
+    try:
+        os.system('all_params='
+                  + str(song.instruments)
+                  + ' osascript as_open.scpt')
+        time.sleep(1)
+
+        set = live.Set()
+        set.scan(scan_devices=True)
+        set.tempo = song.tempo
+
+        # play all tracks
+        for t in set.tracks:
+            t.clips[0].play()
+
+        # wait for song to finish playing
+        time.sleep(song.get_song_duration())
+
+        # stop all tracks
+        for t in set.tracks:
+            t.clips[0].stop()
+
+        # saves project and closes ableton
+        os.system('osascript as_close.scpt')
+        time.sleep(2)
+
+        return True
+
+    except:
+        return False
+
+
+demos_styles = [33, 27, 29, 4, 30, 39, 38]
+
+for s in demos_styles:
+
+    song_name = 'song_'+str(s)
+    song = Improvisation(song_name)
+    song.initialize_song()
+    song.instruments = s
+    song.export_midi(song_name)
+    song.export_midi('current_song_all')
+    went_live = False
+
+    while not went_live:
+        went_live = go_live_ableton(song)
+
