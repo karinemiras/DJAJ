@@ -1,4 +1,3 @@
-from improvisation import Improvisation
 import live
 import os
 import time
@@ -28,25 +27,9 @@ def go_live_ableton(song):
 
         # saves project and closes ableton
         os.system('osascript as_close.scpt')
-        time.sleep(0.5)
+        time.sleep(2)
 
         return True
 
     except:
         return False
-
-
-for i in range(1, 2):
-
-    song_name = 'song_'+str(i)
-    song = Improvisation(song_name)
-    song.initialize_song()
-    song.export_midi(song_name)
-    song.export_midi('current_song_all')
-
-    went_live = False
-
-   # while not went_live:
-       # went_live = go_live_ableton(song)
-
-
