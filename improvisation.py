@@ -7,10 +7,6 @@ from midiutil import MIDIFile
 
 import numpy as np
 import random
-import operator
-import math
-import sys
-from datetime import datetime
 
 
 class Improvisation:
@@ -34,7 +30,10 @@ class Improvisation:
         self.tempo = None
         self.times = None
         self.drummed = None
+        self.max_time_line = None
+        self.melody_granularity = None
         self.progression = []
+        self.preset = None
 
         self.duration_pool = {
                             'semibreve': 1*4,
@@ -104,7 +103,7 @@ class Improvisation:
                                     }
 
         # instruments preset
-        self.instruments = range(1, 42, 1)
+        self.presets = range(1, 42, 1)
 
         #  Minimum and maximum speed in BPM.
 
@@ -112,6 +111,7 @@ class Improvisation:
         # export 'all' tracks together or 'track' by track
         self.tracks_granularity = 'all'
 
+        self.mutation_magnitude = 0.3
 
     def build_pitch_labels(self):
 
@@ -134,7 +134,6 @@ class Improvisation:
             for oct in range(0, self.num_octaves):
                 self.pitch_labels[key+12*oct] = value
 
-
     def initialize_song(self):
 
         self.tempo = int(min(max(np.random.normal(self.tempo_pool['mean'], self.tempo_pool['std'], 1)[0],
@@ -146,7 +145,7 @@ class Improvisation:
         self.melody_granularity = random.choice(self.melody_granularities)
         self.times = random.choice(self.times_pool)
         self.max_time_line = self.num_bars * self.times * self.beat
-        self.define_instruments()
+        self.preset = random.choice(self.presets)
 
         self.drummed = True if random.uniform(0, 1) <= self.drummed_prob else False
 
@@ -166,9 +165,6 @@ class Improvisation:
 
         self.compose_drums(track=self.tracks['drums'],
                            channel=self.tracks['drums'])
-
-        self.build_midi()
-
 
     def build_scale(self):
 
@@ -194,7 +190,6 @@ class Improvisation:
         for idx, interval in enumerate(intervals):
             for octave in range(0, self.num_octaves):
                 self.scale_keyboard[idx + len(intervals) * octave] = self.key + interval + octave * 12
-
 
     def build_progressions(self):
 
@@ -240,15 +235,15 @@ class Improvisation:
                 self.progression.append(random.choice(local_scale_keyboard))
             self.progression.append(self.key)
 
+    def drums_scale_keyboard(self):
 
-    def define_instruments(self):
-        self.instruments = random.choice(self.instruments)
-
+        keyboard = list(range(self.low_ref1, self.low_ref1 + 24))
+        return keyboard
 
     def compose_drums(self, track, channel):
 
         drums = []
-        local_drums_keyboard = list(range(self.low_ref1, self.low_ref1 + 24))
+        local_drums_keyboard = self.drums_scale_keyboard()
         idx_previous_drum = None
         drums_timeline = 0
 
@@ -289,13 +284,14 @@ class Improvisation:
                                           'duration': self.beat / 2, 'time': drums_timeline + self.beat * 2})
 
                 # extras
-                drums_timeline = self.get_melody_bar(drums,
-                                                     melody_bar,
+                drums_timeline = self.get_melody_bar(melody_bar,
                                                      local_drums_keyboard,
                                                      track,
                                                      channel,
                                                      drums_timeline,
                                                      idx_previous_drum)
+
+                drums.append(melody_bar)
 
         else:
             drums.append([{'track': track, 'channel': channel, 'pitch': 0,
@@ -303,13 +299,17 @@ class Improvisation:
 
         self.genotype['drums'] = drums
 
+    def solo_scale_keyboard(self):
+
+        keyboard = list(filter(lambda x: x >= self.low_ref2
+                                     and x <= self.low_ref2 + self.melody_reach,
+                        self.scale_keyboard))
+        return keyboard
 
     def compose_solo(self, track, channel):
 
         solo = []
-        local_scale_keyboard = list(filter(lambda x: x >= self.low_ref2
-                                                     and x <= self.low_ref2 + self.melody_reach,
-                                           self.scale_keyboard))
+        local_scale_keyboard = self.solo_scale_keyboard()
         idx_previous_pitch = None
         solo_timeline = 0
 
@@ -320,20 +320,19 @@ class Improvisation:
             # there is a chance of having empty bars
             if random.uniform(0, 1) <= self.silent_bars:
                 solo_timeline += self.times * self.beat
-                solo.append([])
+                idx_previous_pitch = None
             else:
-                solo_timeline = self.get_melody_bar(solo,
-                                                    melody_bar,
+                solo_timeline = self.get_melody_bar(melody_bar,
                                                     local_scale_keyboard,
                                                     track,
                                                     channel,
                                                     solo_timeline,
                                                     idx_previous_pitch)
+            solo.append(melody_bar)
 
         self.genotype['solo'] = solo
 
-
-    def get_melody_bar(self, melody, melody_bar, local_scale_keyboard, track, channel, melody_timeline, idx_previous_pitch):
+    def get_melody_bar(self, melody_bar, local_scale_keyboard, track, channel, melody_timeline, idx_previous_pitch):
 
         total_time_bar = 0
         while total_time_bar < self.times * self.beat:
@@ -350,10 +349,7 @@ class Improvisation:
                 total_time_bar = total_time_bar + duration
                 melody_timeline = melody_timeline + duration
 
-        melody.append(melody_bar)
-
         return melody_timeline
-
 
     def get_melody_duration(self):
 
@@ -367,7 +363,6 @@ class Improvisation:
         duration = np.random.choice(duration_pool, 1, p=list_distances)[0]
 
         return duration
-
 
     def get_melody_pitch(self, local_scale_keyboard, idx_previous_pitch):
 
@@ -398,7 +393,6 @@ class Improvisation:
                 idx_pitch = None
 
         return pitch, idx_pitch
-
 
     def compose_bass(self, track, channel):
 
@@ -505,7 +499,6 @@ class Improvisation:
 
         self.genotype['bass'] = bass_progression
 
-
     def compose_chords(self, track, channel):
 
         chords_timeline = 0
@@ -542,7 +535,6 @@ class Improvisation:
 
         self.genotype['chords'] = chords_progression
 
-
     def inversion(self, chord):
 
         # apply none, fifth, or fifth inversion
@@ -557,14 +549,12 @@ class Improvisation:
                 if chord[2]['pitch'] - 12 >= self.low_ref1:
                     chord[1]['pitch'] = chord[1]['pitch'] - 12
 
-
     def get_song_duration(self):
 
         total_beats = self.beat * self.times  * self.num_bars
         minute_portion = total_beats / self.tempo
         seconds = minute_portion * 60
         return seconds
-
 
     def build_midi(self):
 
@@ -591,7 +581,6 @@ class Improvisation:
 
             self.add_notes_midi()
 
-
     def add_notes_midi(self):
 
         for track in self.genotype:
@@ -604,17 +593,14 @@ class Improvisation:
                                            self.genotype[track][bar][idx_note]['duration'],
                                            self.volumes[track])
 
-
     def export_metadata(self):
 
         pass
-
 
     def export_midi(self, name):
 
         with open(name+'.mid', "wb") as output_file:
             self.phenotype.writeFile(output_file)
-
 
     def play_midi(self):
 

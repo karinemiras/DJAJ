@@ -2,11 +2,14 @@ import live
 import os
 import time
 
+
 def go_live_ableton(song):
 
+
     try:
+
         os.system('all_params='
-                  + str(song.instruments)
+                  + str(song.preset)
                   + ' osascript as_open.scpt')
         time.sleep(1)
 
@@ -27,9 +30,10 @@ def go_live_ableton(song):
 
         # saves project and closes ableton
         os.system('osascript as_close.scpt')
-        time.sleep(2)
+        time.sleep(0.5)
 
         return True
 
     except:
         return False
+

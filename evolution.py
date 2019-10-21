@@ -1,52 +1,33 @@
 from improvisation import Improvisation
-import live
-import os
-import time
-
-def go_live_ableton(song):
-
-    try:
-        os.system('all_params='
-                  + str(song.instruments)
-                  + ' osascript as_open.scpt')
-        time.sleep(1)
-
-        set = live.Set()
-        set.scan(scan_devices=True)
-        set.tempo = song.tempo
-
-        # play all tracks
-        for t in set.tracks:
-            t.clips[0].play()
-
-        # wait for song to finish playing
-        time.sleep(song.get_song_duration())
-
-        # stop all tracks
-        for t in set.tracks:
-            t.clips[0].stop()
-
-        # saves project and closes ableton
-        os.system('osascript as_close.scpt')
-        time.sleep(0.5)
-
-        return True
-
-    except:
-        return False
-
+from golive import *
+from mutate import *
+import copy
 
 for i in range(1, 2):
 
     song_name = 'song_'+str(i)
     song = Improvisation(song_name)
     song.initialize_song()
-    song.export_midi(song_name)
-    song.export_midi('current_song_all')
-
-    went_live = False
-
-   # while not went_live:
-       # went_live = go_live_ableton(song)
+    song.build_midi()
 
 
+    # print('------ original-----')
+    # for s in song.genotype['solo']:
+    #    print(s)
+
+    replicated_song = copy.deepcopy(song)
+
+    mutate(replicated_song)
+    # print('------ kid-----')
+    # for s in replicated_song.genotype['solo']:
+    #     print(s)
+    # print('------ original2-----')
+    #
+    # for s in song.genotype['solo']:
+    #     print(s)
+
+    replicated_song.song_name = 'offsw'
+    replicated_song.build_midi()
+    replicated_song.export_midi(replicated_song.song_name)
+
+    song.export_midi(song.song_name)
