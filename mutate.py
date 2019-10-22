@@ -21,12 +21,17 @@ def mutate(song):
         new_melody_bar(song, 'drums')
 
     if True:
-        symmetric_melody_bar(song)
+        symmetric_solo_bar(song)
+
+    if True:
+        new_chord(song)
 
 
 def mutate_tempo(song):
 
+    # perturbs with a least 20 bpm, otherwise it is hard to notice
     perturb = np.random.normal(0, 20, 1)[0]
+    perturb = max(perturb, 20)
     song.tempo = int(min(max(song.tempo + perturb,
                              song.tempo_pool['min']),
                          song.tempo_pool['max']))
@@ -63,7 +68,7 @@ def new_melody_bar(song, track):
     song.genotype[track][bar] = melody_bar
 
 
-def symmetric_melody_bar(song):
+def symmetric_solo_bar(song):
     track = 'solo'
     type_symmetry = random.uniform(0, 1)
 
@@ -97,8 +102,30 @@ def symmetric_melody_bar(song):
                     bar_time += note['duration']
 
 
+def new_chord(song):
 
+    # fixed progressions do not suffer mutation
+    if song.progression_type == 'free':
+        # first and last chords do not change
+        bar = random.choice(range(1, song.num_bars - 2))
+        print(bar)
 
+        # changes base chords
+        chords_timeline = bar * song.times * song.beat
+        chord = []
+        local_scale_keyboard = song.progression_scale_keyboard()
+        pitch = random.choice(local_scale_keyboard)
+
+        song.compose_chord(chord, pitch,  song.genotype['chords'][bar][0]['track'],
+                                          song.genotype['chords'][bar][0]['channel'], chords_timeline)
+        song.genotype['chords'][bar] = chord
+
+        # change bass
+        bass_progression_bar = []
+        song.compose_bass_progression_bar(bass_progression_bar, pitch,
+                                          song.genotype['bass'][bar][0]['track'],
+                                          song.genotype['bass'][bar][0]['channel'], chords_timeline)
+        song.genotype['bass'][bar] = bass_progression_bar
 
 
 

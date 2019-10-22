@@ -33,6 +33,7 @@ class Improvisation:
         self.max_time_line = None
         self.melody_granularity = None
         self.progression = []
+        self.progression_type = None
         self.preset = None
 
         self.duration_pool = {
@@ -86,6 +87,10 @@ class Improvisation:
                           'major',
                           'minor']
 
+        # Free has more chance of happening than fixed progressions.
+        self.progression_types = ['blues', 'fall']
+        self.progression_types.extend(['free'] * 4)
+
         self.intervals_dic = {
                                     'T': 0,
                                     '2m': 1,
@@ -103,7 +108,7 @@ class Improvisation:
                                     }
 
         # instruments preset
-        self.presets = range(1, 42, 1)
+        self.presets = range(1, 45+1, 1)
 
         #  Minimum and maximum speed in BPM.
 
@@ -146,13 +151,13 @@ class Improvisation:
         self.times = random.choice(self.times_pool)
         self.max_time_line = self.num_bars * self.times * self.beat
         self.preset = random.choice(self.presets)
-
+        self.progression_type = random.choice(self.progression_types)
         self.drummed = True if random.uniform(0, 1) <= self.drummed_prob else False
 
         self.build_pitch_labels()
         self.build_scale()
 
-        self.build_progressions()
+        self.compose_progressions()
 
         self.compose_bass(track=self.tracks['bass'],
                           channel=self.tracks['bass'])
@@ -191,18 +196,18 @@ class Improvisation:
             for octave in range(0, self.num_octaves):
                 self.scale_keyboard[idx + len(intervals) * octave] = self.key + interval + octave * 12
 
-    def build_progressions(self):
+    def progression_scale_keyboard(self):
+        keyboard = list(filter(lambda x: x < self.low_ref2 + 12, self.scale_keyboard))
+        return keyboard
+
+    def compose_progressions(self):
+
+        local_scale_keyboard = self.progression_scale_keyboard()
 
         # using bar as unit
         self.progression = []
-        local_scale_keyboard = list(filter(lambda x: x < self.low_ref2 + 12, self.scale_keyboard))
 
-        # Free has more chance of happening than fixed progressions.
-        types = ['blues', 'fall']
-        types.extend(['free'] * 4)
-        type = random.choice(types)
-
-        if type == 'blues':
+        if self.progression_type == 'blues':
             for idx_piece in range(0, int(self.num_bars / 12)):
                 self.progression.extend([self.key,
                                          self.key,
@@ -218,7 +223,7 @@ class Improvisation:
                                          self.key + self.intervals_dic['5J']
                                          ])
 
-        if type == 'fall':
+        if self.progression_type == 'fall':
             if self.scale_mode == 'minor':
                 for idx_piece in range(0, int(self.num_bars / 12)):
                     self.progression.extend(3 *
@@ -227,16 +232,15 @@ class Improvisation:
                                              self.key - self.intervals_dic['4J']])
             else:
                 # I only like this fall for minors
-                type = 'free'
+                self.progression_type = 'free'
 
-        if type == 'free':
+        if self.progression_type == 'free':
             self.progression.append(self.key)
             for idx_piece in range(0, self.num_bars - 2):
                 self.progression.append(random.choice(local_scale_keyboard))
             self.progression.append(self.key)
 
     def drums_scale_keyboard(self):
-
         keyboard = list(range(self.low_ref1, self.low_ref1 + 24))
         return keyboard
 
@@ -402,138 +406,150 @@ class Improvisation:
         for pitch in self.progression:
 
             bass_progression_bar = []
-
-            # some variations work either only for quaternay or ternary
-            if self.times == 3:
-                variation = random.choice(range(1, 3 + 1))
-
-            if self.times == 4:
-                variation = random.choice(range(2, 7 + 1))
-
-            # waltz (made for ternary)
-            if variation == 1:
-                duration = self.beat
-                bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
-                                         'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-                bass_progression_bar.append(
-                    {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
-                     'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-                bass_progression_bar.append(
-                    {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
-                     'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-
-            # tonic full bar
-            if variation == 2:
-                duration = self.times * self.beat
-                bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
-                                         'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-
-            # tonic per beat
-            if variation == 3:
-                for i in range(0, self.times):
-                    duration = self.beat
-                    bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
-                                             'duration': duration, 'time': bass_timeline})
-                    bass_timeline = bass_timeline + duration
-
-            # tonic levadinha (made for quaternary)
-            if variation == 4:
-                duration = self.beat
-                bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
-                                         'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration + self.beat
-                bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
-                                         'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration + self.beat / 2
-                duration = self.beat / 2
-                bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
-                                         'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-
-            # tonic eight alternation (made for quaternary)
-            if variation == 5:
-                duration = self.beat * 2
-                bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
-                                         'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-                bass_progression_bar.append(
-                    {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['8J'],
-                     'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-
-            # tonic-fifth alternation  (made for quaternary)
-            if variation == 6:
-                duration = self.beat * 2
-                bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
-                                         'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-                bass_progression_bar.append(
-                    {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
-                     'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-
-            # tonic-fifth-eight arpeggio  (made for quaternary)
-            if variation == 7:
-                duration = self.beat
-                bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
-                                         'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-                bass_progression_bar.append(
-                    {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
-                     'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-                bass_progression_bar.append(
-                    {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['8J'],
-                     'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-                bass_progression_bar.append(
-                    {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
-                     'duration': duration, 'time': bass_timeline})
-                bass_timeline = bass_timeline + duration
-
+            bass_timeline = self.compose_bass_progression_bar(bass_progression_bar, pitch, track, channel, bass_timeline)
             bass_progression.append(bass_progression_bar)
 
         self.genotype['bass'] = bass_progression
+
+    def compose_bass_progression_bar(self, bass_progression_bar, pitch, track, channel, bass_timeline):
+
+        # some variations work either only for quaternay or ternary
+        if self.times == 3:
+            variation = random.choice(range(1, 3 + 1))
+
+        if self.times == 4:
+            variation = random.choice(range(2, 7 + 1))
+
+        # waltz (made for ternary)
+        if variation == 1:
+            duration = self.beat
+            bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
+                                         'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+            bass_progression_bar.append(
+                {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
+                 'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+            bass_progression_bar.append(
+                {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
+                 'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+
+        # tonic full bar
+        if variation == 2:
+            duration = self.times * self.beat
+            bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
+                                         'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+
+        # tonic per beat
+        if variation == 3:
+            for i in range(0, self.times):
+                duration = self.beat
+                bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
+                                             'duration': duration, 'time': bass_timeline})
+                bass_timeline = bass_timeline + duration
+
+        # tonic levadinha (made for quaternary)
+        if variation == 4:
+            duration = self.beat
+            bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
+                                         'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration + self.beat
+            bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
+                                         'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration + self.beat / 2
+            duration = self.beat / 2
+            bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
+                                         'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+
+        # tonic eight alternation (made for quaternary)
+        if variation == 5:
+            duration = self.beat * 2
+            bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
+                                         'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+            bass_progression_bar.append(
+                {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['8J'],
+                 'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+
+        # tonic-fifth alternation  (made for quaternary)
+        if variation == 6:
+            duration = self.beat * 2
+            bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
+                                         'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+            bass_progression_bar.append(
+                {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
+                 'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+
+        # tonic-fifth-eight arpeggio  (made for quaternary)
+        if variation == 7:
+            duration = self.beat
+            bass_progression_bar.append({'track': track, 'channel': channel, 'pitch': pitch,
+                                         'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+            bass_progression_bar.append(
+                {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
+                 'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+            bass_progression_bar.append(
+                {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['8J'],
+                 'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+            bass_progression_bar.append(
+                {'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
+                 'duration': duration, 'time': bass_timeline})
+            bass_timeline = bass_timeline + duration
+
+        return bass_timeline
 
     def compose_chords(self, track, channel):
 
         chords_timeline = 0
         chords_progression = []
 
-        duration = self.times * self.beat
         for pitch in self.progression:
 
             chord = []
-            # chords should not go as low as bass
-            if pitch < self.low_ref2 - 12:
-                pitch = pitch + self.intervals_dic['8J']
 
             # there is a chance first bar is silent
             if chords_timeline == 0 and random.uniform(0, 1) <= 0.5:
                 chords_timeline += self.times * self.beat
             else:
-                chord.append({'track': track, 'channel': channel, 'pitch': pitch,
-                              'duration': duration, 'time': chords_timeline})
-
-                pitch_third = pitch + self.intervals_dic['3m']
-                if self.scale_keyboard.count(pitch) == 0:
-                    pitch_third += 1
-                chord.append({'track': track, 'channel': channel, 'pitch': pitch_third,
-                              'duration': duration, 'time': chords_timeline})
-
-                chord.append({'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
-                              'duration': duration, 'time': chords_timeline})
-                chords_timeline = chords_timeline + duration
-
-                self.inversion(chord)
+                chords_timeline = self.compose_chord(chord, pitch, track, channel, chords_timeline)
 
             chords_progression.append(chord)
 
         self.genotype['chords'] = chords_progression
+
+    def compose_chord(self, chord, pitch, track, channel, chords_timeline):
+
+        duration = self.times * self.beat
+
+        # chords should not go as low as bass
+        if pitch < self.low_ref2 - 12:
+            pitch = pitch + self.intervals_dic['8J']
+
+        chord.append({'track': track, 'channel': channel, 'pitch': pitch,
+                      'duration': duration, 'time': chords_timeline})
+
+        pitch_third = pitch + self.intervals_dic['3m']
+        if self.scale_keyboard.count(pitch) == 0:
+            pitch_third += 1
+        chord.append({'track': track, 'channel': channel, 'pitch': pitch_third,
+                      'duration': duration, 'time': chords_timeline})
+
+        chord.append({'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
+                      'duration': duration, 'time': chords_timeline})
+        chords_timeline = chords_timeline + duration
+
+        self.inversion(chord)
+
+        return chords_timeline
 
     def inversion(self, chord):
 
