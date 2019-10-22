@@ -1,29 +1,33 @@
 import copy
 import numpy as np
 import random
-
+import sys
+import math
 
 # all genotypes get mutate for 30 percent of the mutable traits
 def mutate(song):
 
-    #if np.random.normal(0, 1, 1)[0] <= song.mutation_magnitude:
+    mutation_types = range(1, 6+1)
 
-    if True:
+    mutations_tomake = random.sample(mutation_types,
+                                     math.ceil(len(mutation_types)*song.mutation_magnitude))
+    print(mutations_tomake)
+    if 1 in mutations_tomake:
         mutate_tempo(song)
 
-    if True:
+    if 2 in mutations_tomake:
         mutate_preset(song)
 
-    if True:
+    if 3 in mutations_tomake:
         new_melody_bar(song, 'solo')
 
-    if True:
+    if 4 in mutations_tomake:
         new_melody_bar(song, 'drums')
 
-    if True:
+    if 5 in mutations_tomake:
         symmetric_solo_bar(song)
 
-    if True:
+    if 6 in mutations_tomake:
         new_chord(song)
 
 
@@ -108,7 +112,6 @@ def new_chord(song):
     if song.progression_type == 'free':
         # first and last chords do not change
         bar = random.choice(range(1, song.num_bars - 2))
-        print(bar)
 
         # changes base chords
         chords_timeline = bar * song.times * song.beat

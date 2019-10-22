@@ -1,8 +1,7 @@
 from improvisation import Improvisation
 from golive import *
 
-demos_styles = [33, 27, 29, 4, 30, 39, 38]
-#demos_styles =  range(1,43)
+demos_styles = range(1, max(Improvisation.presets)+1)
 
 for s in demos_styles:
 
