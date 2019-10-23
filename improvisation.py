@@ -31,7 +31,6 @@ class Improvisation:
         self.times = None
         self.drummed = None
         self.max_time_line = None
-        self.melody_granularity = None
         self.progression = []
         self.progression_type = None
         self.preset = None
@@ -55,7 +54,7 @@ class Improvisation:
             'chords': 1,
             'solo' : 2
         }
-        self.melody_granularities = [3, 4]
+        self.melody_granularities = [1, 2, 3, 4]
         # Channels left and right
         self.num_channels = 2
         # Volumes by track
@@ -147,7 +146,6 @@ class Improvisation:
         self.key = random.choice(self.pitch_pool)
         self.scale_mode = random.choice(self.scale_modes)
         self.scale_type = random.choice(self.scale_types)
-        self.melody_granularity = random.choice(self.melody_granularities)
         self.times = random.choice(self.times_pool)
         self.max_time_line = self.num_bars * self.times * self.beat
         self.preset = random.choice(self.presets)
@@ -318,7 +316,6 @@ class Improvisation:
         solo_timeline = 0
 
         for bar in range(0, self.num_bars):
-
             melody_bar = []
 
             # there is a chance of having empty bars
@@ -357,11 +354,13 @@ class Improvisation:
 
     def get_melody_duration(self):
 
+        melody_granularity = random.choice(self.melody_granularities)
         duration_pool = np.array([self.duration_pool[value] for value in self.duration_pool])
         idx_distances = np.arange(0, len(self.duration_pool))
         list_distances = abs(idx_distances - np.where(duration_pool == self.beat)[0])
         list_distances = 1 / (list_distances + 1)
-        list_distances = pow(list_distances, self.melody_granularity)
+
+        list_distances = pow(list_distances, melody_granularity)
         list_distances = list_distances / list_distances.sum()
 
         duration = np.random.choice(duration_pool, 1, p=list_distances)[0]
@@ -377,8 +376,9 @@ class Improvisation:
             idx_distances = np.arange(0, len(local_scale_keyboard))
             list_distances = abs(idx_distances - idx_previous_pitch)
             list_distances = 1 / (list_distances + 1)
-            list_distances = list_distances * list_distances
-
+            melody_granularity = random.choice(self.melody_granularities)
+            list_distances = pow(list_distances, melody_granularity)
+ 
             # pitch repetition happens a little bit more than the average
             # (the plus one above garantees this and avoids division by zero)
             list_distances[np.where(list_distances == 1)] = np.average(list_distances)

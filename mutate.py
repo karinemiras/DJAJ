@@ -11,7 +11,7 @@ def mutate(song):
 
     mutations_tomake = random.sample(mutation_types,
                                      math.ceil(len(mutation_types)*song.mutation_magnitude))
-    print(mutations_tomake)
+
     if 1 in mutations_tomake:
         mutate_tempo(song)
 
