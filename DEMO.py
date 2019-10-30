@@ -1,13 +1,17 @@
-from improvisation import Improvisation
+from song import Song
 from golive import *
+import random
 
-demos_styles = range(1, max(Improvisation('').presets)+1)
-#demos_styles = [40, 42, 12, 18, 29, 2] # rock examples
+# one random
+demos_styles = [random.choice(Song('').presets)]
+# all
+#demos_styles = Improvisation('').presets
+# rock examples
+#demos_styles = [29, 40, 42, 12, 18, 2]
 
 for s in demos_styles:
 
-    song_name = 'song_'+str(s)
-    song = Improvisation(song_name)
+    song = Song('')
     song.initialize_song()
     song.build_midi()
     song.preset = s

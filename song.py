@@ -9,13 +9,12 @@ import numpy as np
 import random
 
 
-class Improvisation:
+class Song:
 
     def __init__(self, _song_name):
 
         # Identification of the track/individual
         self.song_name = _song_name
-        # Genotype
         self.genotype = {}
         self.phenotype = None
         # Key of the scale
@@ -30,10 +29,11 @@ class Improvisation:
         self.tempo = None
         self.times = None
         self.drummed = None
-        self.max_time_line = None
         self.progression = []
         self.progression_type = None
         self.preset = None
+        self.quality = 1#None
+        self.novelty = 1#None
 
         self.duration_pool = {
                             'semibreve': 1*4,
@@ -49,20 +49,20 @@ class Improvisation:
         self.num_bars = 12
         # Tracks info
         self.tracks = {
-            'drums' : 3,
-            'bass' : 0,
-            'chords': 1,
-            'solo' : 2
+            'drums': 3,
+            'bass': 0,
+            'harmony': 1,
+            'solo': 2
         }
         self.melody_granularities = [1, 2, 3, 4]
         # Channels left and right
         self.num_channels = 2
         # Volumes by track
         self.volumes = {
-            'bass' : 130,
-            'chords' : 80,
-            'solo' : 150,
-            'drums' : 110
+            'bass': 130,
+            'harmony': 80,
+            'solo': 150,
+            'drums': 110
         }
 
         # Central C is normally C4 (60) - but in Garage band, it is 72
@@ -107,15 +107,13 @@ class Improvisation:
                                     }
 
         # instruments preset
-        self.presets = range(1, 45+1, 1)
+        self.presets = range(1, 51+1, 1)
 
         #  Minimum and maximum speed in BPM.
-
         self.tempo_pool = {'min': 90, 'mean': 130, 'std': 30, 'max': 190}
+
         # export 'all' tracks together or 'track' by track
         self.tracks_granularity = 'all'
-
-        self.mutation_magnitude = 0.3
 
     def build_pitch_labels(self):
 
@@ -147,7 +145,6 @@ class Improvisation:
         self.scale_mode = random.choice(self.scale_modes)
         self.scale_type = random.choice(self.scale_types)
         self.times = random.choice(self.times_pool)
-        self.max_time_line = self.num_bars * self.times * self.beat
         self.preset = random.choice(self.presets)
         self.progression_type = random.choice(self.progression_types)
         self.drummed = True if random.uniform(0, 1) <= self.drummed_prob else False
@@ -160,8 +157,8 @@ class Improvisation:
         self.compose_bass(track=self.tracks['bass'],
                           channel=self.tracks['bass'])
 
-        self.compose_chords(track=self.tracks['chords'],
-                            channel=self.tracks['chords'])
+        self.compose_harmony(track=self.tracks['harmony'],
+                             channel=self.tracks['harmony'])
 
         self.compose_solo(track=self.tracks['solo'],
                           channel=self.tracks['solo'])
@@ -378,7 +375,7 @@ class Improvisation:
             list_distances = 1 / (list_distances + 1)
             melody_granularity = random.choice(self.melody_granularities)
             list_distances = pow(list_distances, melody_granularity)
- 
+
             # pitch repetition happens a little bit more than the average
             # (the plus one above garantees this and avoids division by zero)
             list_distances[np.where(list_distances == 1)] = np.average(list_distances)
@@ -507,49 +504,49 @@ class Improvisation:
 
         return bass_timeline
 
-    def compose_chords(self, track, channel):
+    def compose_harmony(self, track, channel):
 
-        chords_timeline = 0
-        chords_progression = []
+        harmony_timeline = 0
+        harmony_progression = []
 
         for pitch in self.progression:
 
             chord = []
 
             # there is a chance first bar is silent
-            if chords_timeline == 0 and random.uniform(0, 1) <= 0.5:
-                chords_timeline += self.times * self.beat
+            if harmony_timeline == 0 and random.uniform(0, 1) <= 0.5:
+                harmony_timeline += self.times * self.beat
             else:
-                chords_timeline = self.compose_chord(chord, pitch, track, channel, chords_timeline)
+                harmony_timeline = self.compose_chord(chord, pitch, track, channel, harmony_timeline)
 
-            chords_progression.append(chord)
+            harmony_progression.append(chord)
 
-        self.genotype['chords'] = chords_progression
+        self.genotype['harmony'] = harmony_progression
 
-    def compose_chord(self, chord, pitch, track, channel, chords_timeline):
+    def compose_chord(self, chord, pitch, track, channel, harmony_timeline):
 
         duration = self.times * self.beat
 
-        # chords should not go as low as bass
+        # harmony should not go as low as bass
         if pitch < self.low_ref2 - 12:
             pitch = pitch + self.intervals_dic['8J']
 
         chord.append({'track': track, 'channel': channel, 'pitch': pitch,
-                      'duration': duration, 'time': chords_timeline})
+                      'duration': duration, 'time': harmony_timeline})
 
         pitch_third = pitch + self.intervals_dic['3m']
         if self.scale_keyboard.count(pitch) == 0:
             pitch_third += 1
         chord.append({'track': track, 'channel': channel, 'pitch': pitch_third,
-                      'duration': duration, 'time': chords_timeline})
+                      'duration': duration, 'time': harmony_timeline})
 
         chord.append({'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
-                      'duration': duration, 'time': chords_timeline})
-        chords_timeline = chords_timeline + duration
+                      'duration': duration, 'time': harmony_timeline})
+        harmony_timeline = harmony_timeline + duration
 
         self.inversion(chord)
 
-        return chords_timeline
+        return harmony_timeline
 
     def inversion(self, chord):
 

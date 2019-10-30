@@ -1,16 +1,15 @@
 import copy
 import numpy as np
 import random
-import sys
 import math
 
-# all genotypes get mutate for 30 percent of the mutable traits
-def mutate(song):
+# a genotype gets mutate for mutation_magnitude% of the mutable traits
+def mutate(song, mutation_size):
 
     mutation_types = range(1, 6+1)
 
     mutations_tomake = random.sample(mutation_types,
-                                     math.ceil(len(mutation_types)*song.mutation_magnitude))
+                                     math.ceil(len(mutation_types) * mutation_size))
 
     if 1 in mutations_tomake:
         mutate_tempo(song)
@@ -110,24 +109,24 @@ def new_chord(song):
 
     # fixed progressions do not suffer mutation
     if song.progression_type == 'free':
-        # first and last chords do not change
+        # first and last harmony do not change
         bar = random.choice(range(1, song.num_bars - 2))
 
-        # changes base chords
-        chords_timeline = bar * song.times * song.beat
+        # changes base harmony
+        harmony_timeline = bar * song.times * song.beat
         chord = []
         local_scale_keyboard = song.progression_scale_keyboard()
         pitch = random.choice(local_scale_keyboard)
 
-        song.compose_chord(chord, pitch,  song.genotype['chords'][bar][0]['track'],
-                                          song.genotype['chords'][bar][0]['channel'], chords_timeline)
-        song.genotype['chords'][bar] = chord
+        song.compose_chord(chord, pitch,  song.genotype['harmony'][bar][0]['track'],
+                                          song.genotype['harmony'][bar][0]['channel'], harmony_timeline)
+        song.genotype['harmony'][bar] = chord
 
         # change bass
         bass_progression_bar = []
         song.compose_bass_progression_bar(bass_progression_bar, pitch,
                                           song.genotype['bass'][bar][0]['track'],
-                                          song.genotype['bass'][bar][0]['channel'], chords_timeline)
+                                          song.genotype['bass'][bar][0]['channel'], harmony_timeline)
         song.genotype['bass'][bar] = bass_progression_bar
 
 
