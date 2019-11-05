@@ -3,7 +3,7 @@ import numpy as np
 import random
 import math
 
-# a genotype gets mutate for mutation_magnitude% of the mutable traits
+# a genotype gets mutated for mutation_magnitude% of the mutable traits
 def mutate(song, mutation_size):
 
     mutation_types = range(1, 6+1)
@@ -21,7 +21,7 @@ def mutate(song, mutation_size):
         new_melody_bar(song, 'solo')
 
     if 4 in mutations_tomake:
-        new_melody_bar(song, 'drums')
+        new_melody_bar(song, 'percussion')
 
     if 5 in mutations_tomake:
         symmetric_solo_bar(song)
@@ -48,8 +48,8 @@ def new_melody_bar(song, track):
 
     if track == 'solo':
         local_scale_keyboard = song.solo_scale_keyboard()
-    if track == 'drums':
-        local_scale_keyboard = song.drums_scale_keyboard()
+    if track == 'percussion':
+        local_scale_keyboard = song.percussion_scale_keyboard()
 
     bar = random.choice(range(0, song.num_bars))
     melody_timeline = bar * song.times * song.beat

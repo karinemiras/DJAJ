@@ -6,15 +6,15 @@ from midi2audio import FluidSynth
 from midiutil import MIDIFile
 
 import numpy as np
+import pickle
 import random
-
 
 class Song:
 
-    def __init__(self, _song_name):
+    def __init__(self, _song_id):
 
         # Identification of the track/individual
-        self.song_name = _song_name
+        self.song_id = _song_id
         self.genotype = {}
         self.phenotype = None
         # Key of the scale
@@ -49,7 +49,7 @@ class Song:
         self.num_bars = 12
         # Tracks info
         self.tracks = {
-            'drums': 3,
+            'percussion': 3,
             'bass': 0,
             'harmony': 1,
             'solo': 2
@@ -62,7 +62,7 @@ class Song:
             'bass': 130,
             'harmony': 80,
             'solo': 150,
-            'drums': 110
+            'percussion': 110
         }
 
         # Central C is normally C4 (60) - but in Garage band, it is 72
@@ -76,7 +76,7 @@ class Song:
         self.num_octaves = 5
         self.drummed_prob = 1
         self.silent_bars = 0.1
-        # Labels for all pitchs of the keyboard, regardless key
+        # Labels for all pitches of the keyboard, regardless key
         self.pitch_labels = {}
 
         self.scale_types = ['pentatonic',
@@ -163,8 +163,8 @@ class Song:
         self.compose_solo(track=self.tracks['solo'],
                           channel=self.tracks['solo'])
 
-        self.compose_drums(track=self.tracks['drums'],
-                           channel=self.tracks['drums'])
+        self.compose_percussion(track=self.tracks['percussion'],
+                           channel=self.tracks['percussion'])
 
     def build_scale(self):
 
@@ -235,16 +235,16 @@ class Song:
                 self.progression.append(random.choice(local_scale_keyboard))
             self.progression.append(self.key)
 
-    def drums_scale_keyboard(self):
+    def percussion_scale_keyboard(self):
         keyboard = list(range(self.low_ref1, self.low_ref1 + 24))
         return keyboard
 
-    def compose_drums(self, track, channel):
+    def compose_percussion(self, track, channel):
 
-        drums = []
-        local_drums_keyboard = self.drums_scale_keyboard()
+        percussion = []
+        local_percussion_keyboard = self.percussion_scale_keyboard()
         idx_previous_drum = None
-        drums_timeline = 0
+        percussion_timeline = 0
 
         if self.drummed:
 
@@ -256,47 +256,47 @@ class Song:
                 if self.times == 4:
 
                     # leave space for opening turn
-                    if drums_timeline > 0:
+                    if percussion_timeline > 0:
                         melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
-                                      'duration': self.beat / 2, 'time': drums_timeline})
+                                      'duration': self.beat / 2, 'time': percussion_timeline})
                         melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
-                                      'duration': self.beat / 2, 'time': drums_timeline + self.beat})
+                                      'duration': self.beat / 2, 'time': percussion_timeline + self.beat})
                         # space for ending turns
                         if random.uniform(0, 1) <= 0.75:
                             melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
-                                          'duration': self.beat / 2, 'time': drums_timeline + self.beat * 2})
+                                          'duration': self.beat / 2, 'time': percussion_timeline + self.beat * 2})
                             melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
-                                          'duration': self.beat / 2, 'time': drums_timeline + self.beat * 3})
+                                          'duration': self.beat / 2, 'time': percussion_timeline + self.beat * 3})
 
                 # kick and snare for ternary
                 if self.times == 3:
 
                     # leave space for opening turn
-                    if drums_timeline > 0:
+                    if percussion_timeline > 0:
                         melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
-                                      'duration': self.beat / 2, 'time': drums_timeline})
+                                      'duration': self.beat / 2, 'time': percussion_timeline})
                         # space for ending turns
                         if random.uniform(0, 1) <= 0.75:
                             melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
-                                          'duration': self.beat / 2, 'time': drums_timeline + self.beat})
+                                          'duration': self.beat / 2, 'time': percussion_timeline + self.beat})
                             melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
-                                          'duration': self.beat / 2, 'time': drums_timeline + self.beat * 2})
+                                          'duration': self.beat / 2, 'time': percussion_timeline + self.beat * 2})
 
                 # extras
-                drums_timeline = self.get_melody_bar(melody_bar,
-                                                     local_drums_keyboard,
+                percussion_timeline = self.get_melody_bar(melody_bar,
+                                                     local_percussion_keyboard,
                                                      track,
                                                      channel,
-                                                     drums_timeline,
+                                                     percussion_timeline,
                                                      idx_previous_drum)
 
-                drums.append(melody_bar)
+                percussion.append(melody_bar)
 
         else:
-            drums.append([{'track': track, 'channel': channel, 'pitch': 0,
-                          'duration': 1 / 64, 'time': drums_timeline}])
+            percussion.append([{'track': track, 'channel': channel, 'pitch': 0,
+                          'duration': 1 / 64, 'time': percussion_timeline}])
 
-        self.genotype['drums'] = drums
+        self.genotype['percussion'] = percussion
 
     def solo_scale_keyboard(self):
 
@@ -564,14 +564,14 @@ class Song:
 
     def get_song_duration(self):
 
-        total_beats = self.beat * self.times  * self.num_bars
+        total_beats = self.beat * self.times * self.num_bars
         minute_portion = total_beats / self.tempo
         seconds = minute_portion * 60
         return seconds
 
-    def build_midi(self):
+    def build_midi(self, path='', song_id='', export_phenotype=False):
 
-        if self.tracks_granularity == 'track':
+        if self.tracks_granularity == 'track' and export_phenotype:
 
             for track in self.genotype:
                 self.phenotype = MIDIFile(
@@ -581,30 +581,32 @@ class Song:
                                         0,  # time
                                         self.tempo)
                 self.add_notes_midi(track)
+                self.export_midi(path+'/phenotypes/'+song_id+'_'+track)
 
-                self.export_midi(self.song_name+'_'+track)
-
-        else:
+        if self.tracks_granularity == 'all':
             self.phenotype = MIDIFile(
                     numTracks=len(self.tracks),
                     deinterleave=False)
-            self.phenotype.addTempo(0,#track
-                                    0,#time
+            self.phenotype.addTempo(0,  #track
+                                    0,  #time
                                     self.tempo)
 
             self.add_notes_midi()
+            if export_phenotype:
+                self.export_midi(path+'/phenotypes/'+song_id)
 
-    def add_notes_midi(self):
+    def add_notes_midi(self, track_export=None):
 
         for track in self.genotype:
-            for bar in range(0, len(self.genotype[track])):
-                for idx_note in range(0, len(self.genotype[track][bar])):
-                    self.phenotype.addNote(self.genotype[track][bar][idx_note]['track'],
-                                           self.genotype[track][bar][idx_note]['channel'],
-                                           self.genotype[track][bar][idx_note]['pitch'],
-                                           self.genotype[track][bar][idx_note]['time'],
-                                           self.genotype[track][bar][idx_note]['duration'],
-                                           self.volumes[track])
+            if track_export is None or track == track_export:
+                for bar in range(0, len(self.genotype[track])):
+                    for idx_note in range(0, len(self.genotype[track][bar])):
+                        self.phenotype.addNote(self.genotype[track][bar][idx_note]['track'],
+                                               self.genotype[track][bar][idx_note]['channel'],
+                                               self.genotype[track][bar][idx_note]['pitch'],
+                                               self.genotype[track][bar][idx_note]['time'],
+                                               self.genotype[track][bar][idx_note]['duration'],
+                                               self.volumes[track])
 
     def export_metadata(self):
 
@@ -619,7 +621,7 @@ class Song:
 
         if self.tracks_granularity == 'all':
             fs = FluidSynth()
-            fs.play_midi(self.song_name+'.mid')
+            fs.play_midi(self.song_id+'.mid')
         else:
             print('MIDIs were exported track by track, thus will not play.')
 
