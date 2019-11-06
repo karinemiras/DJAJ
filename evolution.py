@@ -6,12 +6,11 @@ from experiment_management import *
 from deap import base
 from deap import creator
 from deap import tools
-import copy
 
+import copy
+import matplotlib.pyplot as plt
 import numpy as np
 
-#temp
-import time
 
 class Evolution:
 
@@ -22,12 +21,13 @@ class Evolution:
         self.population = None
         self.offspring = None
         self.next_song_id = None
+        self.logbook = None
 
         # params #
         self.num_objectives = 2
         self.mutation_size = 0.3
         self.population_size = 4
-        self.generations = 3#50
+        self.generations = 10#50
         # params #
 
         self.export_genotype = True
@@ -61,28 +61,56 @@ class Evolution:
                               tools.selNSGA2,
                               k=self.population_size)
 
-        self.stats = tools.Statistics(lambda ind: ind.fitness.values)
+        stats_quality = tools.Statistics(lambda ind: ind.fitness.values[0])
+        stats_novelty = tools.Statistics(lambda ind: ind.fitness.values[1])
+        self.stats = tools.MultiStatistics(quality=stats_quality, novelty=stats_novelty)
         self.stats.register("avg", np.mean, axis=0)
         self.stats.register("std", np.std, axis=0)
 
-        self.logbook = tools.Logbook()
-        self.logbook.header = "gen", "avg", "std"
+    def read_logbook(self):
+        with open(self.path+'/evolution_summary.pkl', 'rb') as input:
+            self.logbook = pickle.load(input)
+            print(self.logbook)
+
+    def initialize(self, individual):
+        individual[0].song_id = str(self.next_song_id)
+        self.next_song_id += 1
+        individual[0].initialize_song()
+        individual[0].build_midi(self.path, individual[0].song_id, self.export_phenotype)
+        self.evaluate(individual)
 
     def new_genotype(self):
         song = Song('')
         return song
 
     def new_offspring(self, individual):
-        self.offspring.append(self.replicate_mutate(individual))
-        self.offspring[-1][0].song_id = str(self.next_song_id)
+
+        offspring = self.replicate_mutate(individual)
+        offspring[0].song_id = str(self.next_song_id)
         self.next_song_id += 1
-        self.offspring[-1][0].build_midi(self.path, self.offspring[-1][0].song_id, self.export_phenotype)
-        self.evaluate(self.offspring[-1])
+        offspring[0].build_midi(self.path, offspring[0].song_id, self.export_phenotype)
+        self.evaluate(offspring)
+        return offspring
 
     def export_pickle(self, individual, file):
 
         with open(file, 'wb') as output:
             pickle.dump(individual, output, pickle.HIGHEST_PROTOCOL)
+
+    def logs_results(self, generation, new=True):
+
+        if new:
+            self.logbook = tools.Logbook()
+            self.logbook.header = "gen", "quality", "novelty"
+            self.logbook.chapters["quality"].header = "avg", "std"
+            self.logbook.chapters["novelty"].header = "avg", "std"
+
+        record = self.stats.compile(self.population)
+        self.logbook.record(gen=generation, **record)
+        print(self.logbook.stream)
+
+        with open(self.path + '/evolution_summary.pkl', 'wb') as output:
+            pickle.dump(self.logbook, output, pickle.HIGHEST_PROTOCOL)
 
     def evaluate(self, individual):
 
@@ -92,16 +120,16 @@ class Evolution:
             while not went_live:
                 went_live = go_live_ableton(individual[0])
 
-        fitness_quality = random.uniform(0,1)
-        fitness_novelty = individual[0].tempo
+        # fix!
+        fitness_quality = random.uniform(0, 1)
+        fitness_novelty = random.uniform(0, 1)
 
         individual.fitness.values = fitness_quality, fitness_novelty
 
-        time.sleep(1)
         if self.export_genotype:
             self.export_pickle(individual,
                                self.path + '/genotypes/individual_' + individual[0].song_id + '.pkl')
-
+            
         print('-- evaluated song '+individual[0].song_id +
               ', quality: '+str(fitness_quality)+' novelty: '+str(fitness_novelty))
 
@@ -110,44 +138,94 @@ class Evolution:
         mutate(offspring[0], self.mutation_size)
         return offspring
 
+    def select(self):
+        # inserts offspring into population and selects in steady-state
+        self.population = self.population + self.offspring
+        self.population = self.toolbox.select(self.population)
+
+    def plots_summary(self):
+
+        gen = self.logbook.select("gen")
+        quality_avg = self.logbook.chapters["quality"].select("avg")
+        quality_std = self.logbook.chapters["quality"].select("std")
+        novelty_avg = self.logbook.chapters["novelty"].select("avg")
+        novelty_std = self.logbook.chapters["novelty"].select("std")
+
+        fig, ax1 = plt.subplots()
+        ax1.plot(gen, quality_avg, "b-", label="Quality")
+        ax1.set_xlabel("Generation")
+        ax1.set_ylabel("Quality", color="b")
+        for tl in ax1.get_yticklabels():
+            tl.set_color("b")
+
+        ax1.fill_between(gen, np.array(quality_avg) - np.array(quality_std),
+                         np.array(quality_avg) + np.array(quality_std), alpha=0.2, facecolor='#66B2FF')
+
+        ax2 = ax1.twinx()
+        ax2.plot(gen, novelty_avg, "r-", label="Novelty")
+        ax2.set_ylabel("Novelty", color="r")
+        for tl in ax2.get_yticklabels():
+            tl.set_color("r")
+
+        ax2.fill_between(gen, np.array(novelty_avg) - np.array(novelty_std),
+                         np.array(novelty_avg) + np.array(novelty_std), alpha=0.2, facecolor='#FF9999')
+
+        plt.savefig(self.path + '/evolution_summary.png')
+
     def evolve(self):
 
         experiment_management = ExperimentManagement(self.path)
 
         do_recovery = not experiment_management.experiment_is_new()
-        print(do_recovery)
         self.population = self.toolbox.population()
 
         if do_recovery:
-            generation, has_offspring, latest_id = experiment_management.read_recovery_state(self.population_size,
-                                                                                             self.population_size)
+
+            self.read_logbook()
+            latest_snapshot, has_offspring, latest_id = experiment_management.read_recovery_state(self.population_size,
+                                                                                                  self.population_size)
+            generation = latest_snapshot
             self.next_song_id = latest_id + 1
 
-            if generation == self.generations - 1:
+            if latest_snapshot == self.generations - 1:
                 print('Experiment is already complete.')
                 return
 
-            experiment_management.load_population(self.population, generation, self.population_size)
+            # if there is a snapshot to recover
+            if latest_snapshot != -1:
+                experiment_management.load_population(self.population, latest_snapshot, self.population_size)
 
-            for ind in self.population:
-               print(ind[0].song_id, ind.fitness)
-
-            print('temoff',has_offspring)
-
+            # if there is a offspring to recover
             if has_offspring:
-                self.offspring = []
-                amount_recovered = experiment_management.load_offspring(self.offspring, generation, self.population_size,
-                                                                        self.population_size, latest_id)
-                generation += 1
-                print('----------- GEN: ', generation)
+                self.offspring = self.toolbox.population()
+                offspring_recovered = experiment_management.load_offspring(self.offspring, latest_snapshot,
+                                                                           self.population_size,
+                                                                           self.population_size, latest_id)
 
-                print('red',amount_recovered)
+                # it recovered offspring is from first unfinished snapshot,
+                # initializes new ones genotypes to fill up first population
+                if latest_snapshot == -1:
+                    generation = 0
+                    print('----------- GEN: ', generation)
 
-                for ind in range(amount_recovered, len(self.population)):
-                    self.new_offspring(self.population[ind])
+                    for ind in range(offspring_recovered, self.population_size):
+                        self.initialize(self.offspring[ind])
+                    self.population = self.offspring
 
-                for ind in self.offspring:
-                   print(ind[0].song_id, ind.fitness)
+                    experiment_management.export_snapshot(self.population, generation)
+                    self.logs_results(generation, new=False)
+
+                # if recovered offspring is from a finished snapshot, replicates replicates/mutates cases and selects
+                else:
+                    generation += 1
+                    print('----------- GEN: ', generation)
+
+                    for ind in range(offspring_recovered, self.population_size):
+                        self.offspring[ind] = self.new_offspring(self.population[ind])
+                    self.select()
+
+                    experiment_management.export_snapshot(self.population, generation)
+                    self.logs_results(generation, new=False)
 
         else:
             # starting a new experiment
@@ -158,48 +236,35 @@ class Evolution:
             print('----------- GEN: ', generation)
 
             for ind in self.population:
-                ind[0].song_id = str(self.next_song_id)
-                self.next_song_id += 1
-                ind[0].initialize_song()
-                ind[0].build_midi(self.path, ind[0].song_id, self.export_phenotype)
-                self.evaluate(ind)
+                self.initialize(ind)
 
             experiment_management.export_snapshot(self.population, generation)
-
-            record = self.stats.compile(self.population)
-            self.logbook.record(gen=generation, **record)
-            print(self.logbook.stream)
-
+            self.logs_results(generation)
 
         generation += 1
-
-        #
-        # file_summary = open(self.path + '/evolution_summary.txt', 'a')
-        #
-        # file_summary.write('')
-        #
 
         while generation < self.generations:
 
             print('----------- GEN: ', generation)
 
             self.offspring = []
-            for ind in self.population:
-                self.new_offspring(ind)
 
-            record = self.stats.compile(self.population)
-            self.logbook.record(gen=generation, **record)
-            print(self.logbook.stream)
+            for ind in range(0, self.population_size):
+                self.offspring.append(self.new_offspring(self.population[ind]))
 
-            # inserts offspring into population and selects in steady-state
-            self.population = self.population + self.offspring
-            self.population = self.toolbox.select(self.population)
+            self.select()
 
             experiment_management.export_snapshot(self.population, generation)
+            self.logs_results(generation, new=False)
 
             generation += 1
 
+            self.plots_summary()
 
-       # file_summary.close()
 
 Evolution('test').evolve()
+
+
+
+
+

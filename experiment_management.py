@@ -41,24 +41,29 @@ class ExperimentManagement:
     def read_recovery_state(self, population_size, offspring_size):
 
         # discovers which snapshot is the latest if there is any
-        snapshots = [f for f in sorted(glob.glob(self.experiment_folder + '/selectedpop/' + "*.txt"))]
-        print('pintos',snapshots)
-        latest_snapshot = snapshots[-1].split('/selectedpop_')[1].split('.')[0]
+        snapshots = []
+        for r, d, f in os.walk(self.experiment_folder + '/selectedpop/'):
+            for file in f:
+                if str(file).find('selectedpop_') == 0:
+                    snapshots.append(int(file.split('_')[1].split('.')[0]))
 
         if len(snapshots) > 0:
+            latest_snapshot = sorted(snapshots)[-1]
             # the latest complete snapshot
-            last_snapshot = int(latest_snapshot)
+            latest_snapshot = int(latest_snapshot)
             # number of individuals expected until the snapshot
-            n_individuals = population_size + last_snapshot * offspring_size
+            n_individuals = population_size + latest_snapshot * offspring_size
         else:
-            last_snapshot = -1
+            latest_snapshot = -1
             n_individuals = 0
 
-        individuals_ids = [f for f in sorted(glob.glob(self.experiment_folder + '/genotypes/' + "*.pkl"))]
-        print('cuus',individuals_ids)
+        individuals = []
+        for r, d, f in os.walk(self.experiment_folder + '/genotypes/'):
+            for file in f:
+                if str(file).find('individual_') == 0:
+                    individuals.append(int(file.split('_')[1].split('.')[0]))
+        latest_id = sorted(individuals)[-1]
 
-        latest_id = int(individuals_ids[-1].split('/individual_')[1].split('.')[0])
-        print(latest_id)
         # if there are more individuals to recover than the number expected in this snapshot
         if latest_id > n_individuals:
             # then there is a partial offspring
@@ -66,7 +71,7 @@ class ExperimentManagement:
         else:
             has_offspring = False
 
-        return last_snapshot, has_offspring, latest_id
+        return latest_snapshot, has_offspring, latest_id
 
     def load_population(self, population, generation, population_size):
         selectedpop = []
@@ -86,13 +91,14 @@ class ExperimentManagement:
         else:
             n_individuals = population_size + last_snapshot * offspring_size
 
+        aux_id = 0
         for individual_id in range(n_individuals+1, latest_id+1):
-            print('rec',individual_id)
             with open(self.experiment_folder + '/genotypes/individual_' + str(individual_id) + '.pkl', 'rb') as input:
-                offspring.append(pickle.load(input))
+                offspring[aux_id] = pickle.load(input)
+            aux_id += 1
 
-        amount_recovered = latest_id - n_individuals
-        return amount_recovered
+        offspring_recovered = latest_id - n_individuals
+        return offspring_recovered
 
 
 
