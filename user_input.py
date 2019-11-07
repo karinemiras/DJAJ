@@ -1,5 +1,4 @@
 import random
-from threading import Timer
 import sys
 import select
 

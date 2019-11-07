@@ -1,9 +1,7 @@
 import os
 import shutil
-import numpy as np
 import pickle
 import glob
-import sys
 
 
 class ExperimentManagement:

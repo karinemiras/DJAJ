@@ -6,7 +6,6 @@ from midi2audio import FluidSynth
 from midiutil import MIDIFile
 
 import numpy as np
-import pickle
 import random
 
 class Song:

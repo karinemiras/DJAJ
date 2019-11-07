@@ -221,6 +221,7 @@ class Evolution:
             # if there is a snapshot to recover
             if latest_snapshot != -1:
                 experiment_management.load_population(self.population, latest_snapshot, self.population_size)
+                print('\nSnapshot '+str(latest_snapshot)+' loaded.')
 
             # if there is a offspring to recover
             if has_offspring:
@@ -232,6 +233,7 @@ class Evolution:
                 # it recovered offspring is from the first (unfinished) snapshot,
                 # fill ups the first population
                 if latest_snapshot == -1:
+
                     generation = 0
                     print('\n----------- GEN: ', generation)
 
@@ -259,6 +261,7 @@ class Evolution:
                     self.logs_results(generation, new=False)
 
         else:
+
             # starting a new experiment
             experiment_management.create_exp_folders()
             generation = 0
@@ -292,6 +295,10 @@ class Evolution:
                     self.cataclysmic_mutations(generation)
 
             experiment_management.export_snapshot(self.population, generation)
+
+            if do_recovery:
+                self.read_logbook()
+                do_recovery = False
             self.logs_results(generation, new=False)
 
             generation += 1
