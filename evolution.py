@@ -2,6 +2,7 @@ from song import Song
 from golive import *
 from mutate import *
 from experiment_management import *
+from user_input import *
 
 from deap import base
 from deap import creator
@@ -27,13 +28,15 @@ class Evolution:
 
         self.num_objectives = 2
         self.mutation_size = 0.3
-        self.population_size = 4#51
-        self.generations = 10#100
-        self.cataclysmic_mutations_freqs = 2#10
-        self.cataclysmic_mutations_size = 2#10
+        self.population_size = 2#51
+        self.generations = 3#100
+        self.cataclysmic_mutations_freqs = 0#10
+        self.cataclysmic_mutations_size = 10
+        self.max_score = 5
+        self.timeout = 5
 
         self.infinite_generations = False
-        self.go_live = False
+        self.go_live = False#True
         self.export_genotype = True
         self.export_phenotype = False
 
@@ -107,7 +110,7 @@ class Evolution:
 
         record = self.stats.compile(self.population)
         self.logbook.record(gen=generation, **record)
-        print(self.logbook.stream)
+        print('\n'+self.logbook.stream)
 
         with open(self.path + '/evolution_summary.pkl', 'wb') as output:
             pickle.dump(self.logbook, output, pickle.HIGHEST_PROTOCOL)
@@ -120,8 +123,8 @@ class Evolution:
             while not went_live:
                 went_live = go_live_ableton(individual[0])
 
+        fitness_quality = get_user_input(self.max_score, self.timeout)
         # fix!
-        fitness_quality = random.uniform(0, 1)
         fitness_novelty = random.uniform(0, 1)
 
         # values[0]: fitness_quality, values[1]:fitness_novelty
@@ -212,7 +215,7 @@ class Evolution:
             self.next_song_id = latest_id + 1
 
             if latest_snapshot == self.generations - 1:
-                print('Experiment is already complete.')
+                print('\nExperiment is already complete.')
                 return
 
             # if there is a snapshot to recover
@@ -230,7 +233,7 @@ class Evolution:
                 # fill ups the first population
                 if latest_snapshot == -1:
                     generation = 0
-                    print('----------- GEN: ', generation)
+                    print('\n----------- GEN: ', generation)
 
                     for ind in range(offspring_recovered, self.population_size):
                         self.initialize(self.offspring[ind], self.next_song_id)
@@ -246,7 +249,7 @@ class Evolution:
                     self.read_logbook()
 
                     generation += 1
-                    print('----------- GEN: ', generation)
+                    print('\n----------- GEN: ', generation)
 
                     for ind in range(offspring_recovered, self.population_size):
                         self.offspring[ind] = self.new_offspring(self.population[ind])
@@ -261,7 +264,7 @@ class Evolution:
             generation = 0
             self.next_song_id = 1
 
-            print('----------- GEN: ', generation)
+            print('\n----------- GEN: ', generation)
 
             for ind in self.population:
                 self.initialize(ind, self.next_song_id)
@@ -274,7 +277,7 @@ class Evolution:
 
         while generation < self.generations:
 
-            print('----------- GEN: ', generation)
+            print('\n----------- GEN: ', generation)
 
             self.offspring = []
 
@@ -283,9 +286,10 @@ class Evolution:
 
             self.select()
 
-            if (generation+1) % self.cataclysmic_mutations_freqs == 0:
-                print('Cataclysmic mutations!')
-                self.cataclysmic_mutations(generation)
+            if self.cataclysmic_mutations_freqs > 0:
+                if (generation+1) % self.cataclysmic_mutations_freqs == 0:
+                    print('\nCataclysmic mutations!')
+                    self.cataclysmic_mutations(generation)
 
             experiment_management.export_snapshot(self.population, generation)
             self.logs_results(generation, new=False)
@@ -300,5 +304,4 @@ parser.add_argument('--experiment_name', default='default_experiment', help='nam
 args = parser.parse_args()
 
 Evolution(args.experiment_name).evolve()
-
 

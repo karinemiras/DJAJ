@@ -19,7 +19,7 @@ class ExperimentManagement:
         os.mkdir(self.experiment_folder+'/phenotypes')
         os.mkdir(self.experiment_folder + '/selectedpop')
 
-        print('Created experiment folders.')
+        print('\nCreated experiment folders.')
 
     def export_snapshot(self, population, gen_num):
         # saves a list with all individuals selected for survival in a genration

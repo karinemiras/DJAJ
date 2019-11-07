@@ -5,9 +5,7 @@ import random
 # one random
 demos_styles = [random.choice(Song('').presets)]
 # all
-#demos_styles = Improvisation('').presets
-# rock examples
-#demos_styles = [29, 40, 42, 12, 18, 2]
+# demos_styles = Improvisation('').presets
 
 for s in demos_styles:
 
