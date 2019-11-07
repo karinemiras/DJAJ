@@ -7,9 +7,11 @@ from deap import base
 from deap import creator
 from deap import tools
 
+import argparse
 import copy
 import matplotlib.pyplot as plt
 import numpy as np
+import shutil
 
 
 class Evolution:
@@ -23,18 +25,19 @@ class Evolution:
         self.next_song_id = None
         self.logbook = None
 
-        # params #
         self.num_objectives = 2
         self.mutation_size = 0.3
-        self.population_size = 4
-        self.generations = 10#50
-        # params #
+        self.population_size = 4#51
+        self.generations = 10#100
+        self.cataclysmic_mutations_freqs = 2#10
+        self.cataclysmic_mutations_size = 2#10
 
-        self.export_genotype = True
-        self.export_phenotype = False
         self.infinite_generations = False
         self.go_live = False
+        self.export_genotype = True
+        self.export_phenotype = False
 
+        # values[0]: fitness_quality, values[1]:fitness_novelty
         creator.create("FitnessesMax",
                        base.Fitness,
                        weights=(1.0,) * self.num_objectives)
@@ -72,19 +75,17 @@ class Evolution:
             self.logbook = pickle.load(input)
             print(self.logbook)
 
-    def initialize(self, individual):
-        individual[0].song_id = str(self.next_song_id)
-        self.next_song_id += 1
+    def initialize(self, individual, next_song_id, generation=None, bkp=False):
+        individual[0].song_id = str(next_song_id)
         individual[0].initialize_song()
         individual[0].build_midi(self.path, individual[0].song_id, self.export_phenotype)
-        self.evaluate(individual)
+        self.evaluate(individual, generation, bkp)
 
     def new_genotype(self):
         song = Song('')
         return song
 
     def new_offspring(self, individual):
-
         offspring = self.replicate_mutate(individual)
         offspring[0].song_id = str(self.next_song_id)
         self.next_song_id += 1
@@ -93,7 +94,6 @@ class Evolution:
         return offspring
 
     def export_pickle(self, individual, file):
-
         with open(file, 'wb') as output:
             pickle.dump(individual, output, pickle.HIGHEST_PROTOCOL)
 
@@ -112,7 +112,7 @@ class Evolution:
         with open(self.path + '/evolution_summary.pkl', 'wb') as output:
             pickle.dump(self.logbook, output, pickle.HIGHEST_PROTOCOL)
 
-    def evaluate(self, individual):
+    def evaluate(self, individual, generation=None, bkp=False):
 
         individual[0].export_midi(self.path + '/current_song_all')
         if self.go_live:
@@ -124,12 +124,18 @@ class Evolution:
         fitness_quality = random.uniform(0, 1)
         fitness_novelty = random.uniform(0, 1)
 
+        # values[0]: fitness_quality, values[1]:fitness_novelty
         individual.fitness.values = fitness_quality, fitness_novelty
 
         if self.export_genotype:
-            self.export_pickle(individual,
-                               self.path + '/genotypes/individual_' + individual[0].song_id + '.pkl')
-            
+            file = self.path + '/genotypes/individual_' + individual[0].song_id
+
+            # in case of cataclysmic mutation, bkps up original genotype
+            if bkp:
+                shutil.copyfile(file + '.pkl', file + '_' + str(generation) + '.pkl')
+
+            self.export_pickle(individual, file + '.pkl')
+
         print('-- evaluated song '+individual[0].song_id +
               ', quality: '+str(fitness_quality)+' novelty: '+str(fitness_novelty))
 
@@ -172,6 +178,25 @@ class Evolution:
 
         plt.savefig(self.path + '/evolution_summary.png')
 
+    def get_indices_of_k_smallest(self, array, k):
+        idx = np.argpartition(array.ravel(), k)
+        return tuple(np.array(np.unravel_index(idx, array.shape))[:, range(min(k, 0), max(k, 0))])
+
+    def cataclysmic_mutations(self, generation):
+
+        # replaces the worst individuals for new random ones
+        quality = []
+        for ind in self.population:
+            quality.append(float(ind.fitness.values[0]))
+
+        indexes = np.array(quality).argsort()[-self.cataclysmic_mutations_size:][::1]
+
+        for index in indexes:
+            new_genotype = self.toolbox.population(n=1)[0]
+            # new genotype keeps id of the pseudo parent
+            self.initialize(new_genotype, self.population[index][0].song_id, generation, bkp=True)
+            self.population[index] = new_genotype
+
     def evolve(self):
 
         experiment_management = ExperimentManagement(self.path)
@@ -181,7 +206,6 @@ class Evolution:
 
         if do_recovery:
 
-            self.read_logbook()
             latest_snapshot, has_offspring, latest_id = experiment_management.read_recovery_state(self.population_size,
                                                                                                   self.population_size)
             generation = latest_snapshot
@@ -202,21 +226,25 @@ class Evolution:
                                                                            self.population_size,
                                                                            self.population_size, latest_id)
 
-                # it recovered offspring is from first unfinished snapshot,
-                # initializes new ones genotypes to fill up first population
+                # it recovered offspring is from the first (unfinished) snapshot,
+                # fill ups the first population
                 if latest_snapshot == -1:
                     generation = 0
                     print('----------- GEN: ', generation)
 
                     for ind in range(offspring_recovered, self.population_size):
-                        self.initialize(self.offspring[ind])
+                        self.initialize(self.offspring[ind], self.next_song_id)
+                        self.next_song_id += 1
                     self.population = self.offspring
 
                     experiment_management.export_snapshot(self.population, generation)
-                    self.logs_results(generation, new=False)
+                    self.logs_results(generation)
 
-                # if recovered offspring is from a finished snapshot, replicates replicates/mutates cases and selects
+                # if there is any finished snapshot, fills up unfinished offspring
                 else:
+
+                    self.read_logbook()
+
                     generation += 1
                     print('----------- GEN: ', generation)
 
@@ -236,7 +264,8 @@ class Evolution:
             print('----------- GEN: ', generation)
 
             for ind in self.population:
-                self.initialize(ind)
+                self.initialize(ind, self.next_song_id)
+                self.next_song_id += 1
 
             experiment_management.export_snapshot(self.population, generation)
             self.logs_results(generation)
@@ -254,6 +283,10 @@ class Evolution:
 
             self.select()
 
+            if (generation+1) % self.cataclysmic_mutations_freqs == 0:
+                print('Cataclysmic mutations!')
+                self.cataclysmic_mutations(generation)
+
             experiment_management.export_snapshot(self.population, generation)
             self.logs_results(generation, new=False)
 
@@ -262,9 +295,10 @@ class Evolution:
             self.plots_summary()
 
 
-Evolution('test').evolve()
+parser = argparse.ArgumentParser()
+parser.add_argument('--experiment_name', default='default_experiment', help='name of the experiment')
+args = parser.parse_args()
 
-
-
+Evolution(args.experiment_name).evolve()
 
 
