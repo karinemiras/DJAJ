@@ -31,8 +31,6 @@ class Song:
         self.progression = []
         self.progression_type = None
         self.preset = None
-        self.quality = None
-        self.novelty = None
 
         self.duration_pool = {
                             'semibreve': 1*4,

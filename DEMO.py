@@ -6,7 +6,7 @@ import random
 parser = argparse.ArgumentParser()
 
 # choose 'all' or 'random'
-parser.add_argument('--type', default='one', help='type of demo to play')
+parser.add_argument('--type', default='random', help='type of demo to play')
 args = parser.parse_args()
 
 # one random preset

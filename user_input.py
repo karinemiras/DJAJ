@@ -5,7 +5,7 @@ import select
 def get_user_input(max_score, timeout):
 
     print("\n  ####! Type an integer from 1 to 5 and press ENTER to evaluate the quality of this song: "
-          #"\n        ...you have " + str(timeout) + " seconds..."
+          "\n        ...you have " + str(timeout) + " seconds..."
         )
 
     i, o, e = select.select([sys.stdin], [], [], 3)
@@ -18,7 +18,7 @@ def get_user_input(max_score, timeout):
 
     if input_value is not None \
             and input_value.isdigit()\
-            and 5 >= float(input_value) >= 1\
+            and max_score >= float(input_value) >= 1\
             and input_value != '':
 
         score = float(input_value)

@@ -8,7 +8,6 @@ from deap import base
 from deap import creator
 from deap import tools
 
-import argparse
 import copy
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,28 +16,38 @@ import shutil
 
 class Evolution:
 
-    def __init__(self, experiment_name):
+    def __init__(self, experiment_name,
+                 _num_objectives=2,
+                 _mutation_size=0.3,
+                 _population_size=10,
+                 _generations=10,
+                 _cataclysmic_mutations_freqs=2,
+                 _cataclysmic_mutations_size=2,
+                 _max_score=5,
+                 _timeout=5,
+                 _go_live=True,
+                 _infinite_generations=False):
 
         self.experiment_name = experiment_name
-        self.path = 'experiments/' + self.experiment_name
+
+        self.num_objectives = _num_objectives
+        self.mutation_size = _mutation_size
+        self.population_size = _population_size
+        self.generations = _generations
+        self.cataclysmic_mutations_freqs = _cataclysmic_mutations_freqs
+        self.cataclysmic_mutations_size = _cataclysmic_mutations_size
+        self.max_score = _max_score
+        self.timeout = _timeout
+        self.go_live = _go_live
+        self.infinite_generations = _infinite_generations
+
         self.population = None
         self.offspring = None
         self.next_song_id = None
         self.logbook = None
-
-        self.num_objectives = 2
-        self.mutation_size = 0.3
-        self.population_size = 2#51
-        self.generations = 3#100
-        self.cataclysmic_mutations_freqs = 0#10
-        self.cataclysmic_mutations_size = 10
-        self.max_score = 5
-        self.timeout = 5
-
-        self.infinite_generations = False
-        self.go_live = False#True
         self.export_genotype = True
         self.export_phenotype = False
+        self.path = 'experiments/' + self.experiment_name
 
         # values[0]: fitness_quality, values[1]:fitness_novelty
         creator.create("FitnessesMax",
@@ -72,6 +81,7 @@ class Evolution:
         self.stats = tools.MultiStatistics(quality=stats_quality, novelty=stats_novelty)
         self.stats.register("avg", np.mean, axis=0)
         self.stats.register("std", np.std, axis=0)
+        self.stats.register("max", np.max, axis=0)
 
     def read_logbook(self):
         with open(self.path+'/evolution_summary.pkl', 'rb') as input:
@@ -105,8 +115,8 @@ class Evolution:
         if new:
             self.logbook = tools.Logbook()
             self.logbook.header = "gen", "quality", "novelty"
-            self.logbook.chapters["quality"].header = "avg", "std"
-            self.logbook.chapters["novelty"].header = "avg", "std"
+            self.logbook.chapters["quality"].header = "avg", "std", "max"
+            self.logbook.chapters["novelty"].header = "avg", "std", "max"
 
         record = self.stats.compile(self.population)
         self.logbook.record(gen=generation, **record)
@@ -117,13 +127,17 @@ class Evolution:
 
     def evaluate(self, individual, generation=None, bkp=False):
 
+        fitness_quality = -1
+        fitness_novelty = -1
+
         individual[0].export_midi(self.path + '/current_song_all')
         if self.go_live:
             went_live = False
             while not went_live:
                 went_live = go_live_ableton(individual[0])
 
-        fitness_quality = get_user_input(self.max_score, self.timeout)
+                fitness_quality = get_user_input(self.max_score, self.timeout)
+
         # fix!
         fitness_novelty = random.uniform(0, 1)
 
@@ -305,10 +319,32 @@ class Evolution:
 
             self.plots_summary()
 
+    def listen(self, generation, song_id):
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--experiment_name', default='default_experiment', help='name of the experiment')
-args = parser.parse_args()
+        if generation is None and song_id is None:
+            print('Choose a snapshot or individual!')
+            return
 
-Evolution(args.experiment_name).evolve()
+        # if there is no snapshot, but there is an individual, plays it
+        if generation is not None:
+            file = open(self.path + '/selectedpop/selectedpop_' + str(generation) + ".txt", "r")
+            for individual in file:
+                self.listen_individual(individual.rstrip('\n'))
+        else:
+            self.listen_individual(song_id)
+
+    def listen_individual(self, song_id):
+
+        individual = song_id
+        with open('experiments/' + self.experiment_name + '/genotypes/individual_' + str(individual) + '.pkl',
+                  'rb') as input:
+            song = pickle.load(input)
+            song = song[0]
+            song.build_midi()
+            song.export_midi('current_song_all')
+            went_live = False
+            while not went_live:
+                went_live = go_live_ableton(song)
+
+
 
