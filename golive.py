@@ -3,14 +3,14 @@ import os
 import time
 
 
-def go_live_ableton(song):
+def go_live_ableton(song, short=False):
 
     try:
 
         os.system('all_params='
                   + str(song.preset)
                   + ' osascript as_open.scpt')
-        time.sleep(1)
+        time.sleep(1.5)
 
         set = live.Set()
         set.scan(scan_devices=True)
@@ -20,8 +20,11 @@ def go_live_ableton(song):
         for t in set.tracks:
             t.clips[0].play()
 
-        # wait for song to finish playing
-        time.sleep(song.get_song_duration())
+        # wait for song to finish playing: complete or 2 seconds
+        if not short:
+            time.sleep(song.get_song_duration())
+        else:
+            time.sleep(2)
 
         # stop all tracks
         for t in set.tracks:

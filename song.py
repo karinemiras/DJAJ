@@ -10,7 +10,7 @@ import random
 
 class Song:
 
-    def __init__(self, _song_id):
+    def __init__(self, _song_id=''):
 
         # Identification of the track/individual
         self.song_id = _song_id

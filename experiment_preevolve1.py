@@ -1,15 +1,16 @@
 from evolution import *
 
-experiment_name = 'default_experiment'
+experiment_name = 'preevolve1'
+
 _num_objectives = 2
 _mutation_size = 0.3
-_population_size = 10
-_generations = 10
-_cataclysmic_mutations_freqs = 2
+_population_size = 2
+_generations = 3
+_cataclysmic_mutations_freqs = 3
 _cataclysmic_mutations_size = 2
 _max_score = 5
 _timeout = 5
-_go_live = True
+_go_live = False
 _infinite_generations = False
 
 experiment = Evolution(

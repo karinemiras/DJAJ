@@ -11,6 +11,7 @@ from deap import tools
 import copy
 import matplotlib.pyplot as plt
 import numpy as np
+from pprint import pprint
 import shutil
 
 
@@ -95,7 +96,7 @@ class Evolution:
         self.evaluate(individual, generation, bkp)
 
     def new_genotype(self):
-        song = Song('')
+        song = Song()
         return song
 
     def new_offspring(self, individual):
@@ -340,6 +341,8 @@ class Evolution:
                   'rb') as input:
             song = pickle.load(input)
             song = song[0]
+            pprint(vars(song))
+
             song.build_midi()
             song.export_midi('current_song_all')
             went_live = False
