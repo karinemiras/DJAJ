@@ -140,7 +140,7 @@ class Evolution:
                 fitness_quality = get_user_input(self.max_score, self.timeout)
 
         # fix!
-        fitness_novelty = random.uniform(0, 1)
+        #fitness_novelty = random.uniform(0, 1)
 
         # values[0]: fitness_quality, values[1]:fitness_novelty
         individual.fitness.values = fitness_quality, fitness_novelty
