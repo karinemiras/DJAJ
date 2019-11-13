@@ -8,7 +8,7 @@ _generations = 10
 _cataclysmic_mutations_freqs = 2
 _cataclysmic_mutations_size = 2
 _max_score = 5
-_timeout = 5
+_timeout = 10
 _go_live = True
 _infinite_generations = False
 

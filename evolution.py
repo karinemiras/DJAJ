@@ -25,7 +25,7 @@ class Evolution:
                  _cataclysmic_mutations_freqs=2,
                  _cataclysmic_mutations_size=2,
                  _max_score=5,
-                 _timeout=5,
+                 _timeout=10,
                  _go_live=True,
                  _infinite_generations=False):
 
@@ -131,13 +131,13 @@ class Evolution:
         fitness_quality = -1
         fitness_novelty = -1
 
-        individual[0].export_midi(self.path + '/current_song_all')
+        individual[0].export_midi('current_song_all')
         if self.go_live:
             went_live = False
             while not went_live:
                 went_live = go_live_ableton(individual[0])
 
-                fitness_quality = get_user_input(self.max_score, self.timeout)
+            fitness_quality = get_user_input(self.max_score, self.timeout)
 
         # fix!
         #fitness_novelty = random.uniform(0, 1)
