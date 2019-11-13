@@ -1,26 +1,40 @@
+from interface import *
 import random
-import sys
-import select
+
+
+def start_timer(slot, timeout=1, interval=1000):
+    counter = 0
+    def handler():
+        nonlocal counter
+        counter += 1
+        slot(counter, timeout)
+        if counter >= timeout:
+            timer.stop()
+            timer.deleteLater()
+    timer = QtCore.QTimer()
+    timer.timeout.connect(handler)
+    timer.start(interval)
+
+
+def timer_func(count, timeout):
+    print('You have:', timeout-count, ' seconds to choose...')
+    if count >= timeout:
+        QtCore.QCoreApplication.quit()
+
 
 def get_user_input(max_score, timeout):
 
-    print("\n  ####! Type an integer from 1 to 5 and press ENTER to evaluate the quality of this song: ")
+    app = QApplication(sys.argv)
+    ap = App()
+    start_timer(timer_func, timeout)
+    app.exec_()
 
-    i, o, e = select.select([sys.stdin], [], [], 3)
-
-    if i:
-        input_value = sys.stdin.readline().strip()
-    else:
-        print("\nSorry, expired time or invalid choice. :( A random choice was made for you.\n")
-        input_value = None
-
-    if input_value is not None \
-            and input_value.isdigit()\
-            and max_score >= float(input_value) >= 1\
-            and input_value != '':
-
-        score = float(input_value)
+    if ap.score > 0:
+        score = ap.score
     else:
         score = random.choice(range(1, max_score + 1))
+        print("\nSorry, your time expired or your choice was invalid. A random choice was made for you.\n")
 
     return score
+
+

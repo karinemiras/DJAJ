@@ -1,15 +1,15 @@
 from evolution import *
 
-experiment_name = 'preevolve1'
+experiment_name = 'karine'
 
 _num_objectives = 2
 _mutation_size = 0.3
 _population_size = 10
-_generations = 4#10
-_cataclysmic_mutations_freqs = 4
-_cataclysmic_mutations_size = 2
+_generations = 4
+_cataclysmic_mutations_freqs = 0
+_cataclysmic_mutations_size = 0
 _max_score = 5
-_timeout = 10
+_timeout = 20
 _go_live = True
 _infinite_generations = False
 

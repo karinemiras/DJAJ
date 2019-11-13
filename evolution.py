@@ -126,6 +126,8 @@ class Evolution:
         with open(self.path + '/evolution_summary.pkl', 'wb') as output:
             pickle.dump(self.logbook, output, pickle.HIGHEST_PROTOCOL)
 
+        self.plots_summary()
+
     def evaluate(self, individual, generation=None, bkp=False):
 
         fitness_quality = -1
@@ -318,7 +320,6 @@ class Evolution:
 
             generation += 1
 
-            self.plots_summary()
 
     def listen(self, generation, song_id):
 
