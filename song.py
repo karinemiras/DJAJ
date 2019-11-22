@@ -133,8 +133,7 @@ class Song:
             for oct in range(0, self.num_octaves):
                 self.pitch_labels[key+12*oct] = value
 
-    def initialize_song(self):
-
+    def choices(self):
         self.tempo = int(min(max(np.random.normal(self.tempo_pool['mean'], self.tempo_pool['std'], 1)[0],
                                  self.tempo_pool['min']),
                              self.tempo_pool['max']))
@@ -145,6 +144,8 @@ class Song:
         self.preset = random.choice(self.presets)
         self.progression_type = random.choice(self.progression_types)
         self.drummed = True if random.uniform(0, 1) <= self.drummed_prob else False
+
+    def compose(self):
 
         self.build_pitch_labels()
         self.build_scale()
@@ -161,7 +162,11 @@ class Song:
                           channel=self.tracks['solo'])
 
         self.compose_percussion(track=self.tracks['percussion'],
-                           channel=self.tracks['percussion'])
+                                channel=self.tracks['percussion'])
+
+    def initialize_song(self):
+        self.choices()
+        self.compose()
 
     def build_scale(self):
 

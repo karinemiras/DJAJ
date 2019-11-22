@@ -50,7 +50,7 @@ class Evolution:
         self.export_phenotype = False
         self.path = 'experiments/' + self.experiment_name
 
-        # values[0]: fitness_quality, values[1]:fitness_novelty
+        # values[0]: fitness_quality, values[1]:fitness_diversity
         creator.create("FitnessesMax",
                        base.Fitness,
                        weights=(1.0,) * self.num_objectives)
@@ -78,8 +78,8 @@ class Evolution:
                               k=self.population_size)
 
         stats_quality = tools.Statistics(lambda ind: ind.fitness.values[0])
-        stats_novelty = tools.Statistics(lambda ind: ind.fitness.values[1])
-        self.stats = tools.MultiStatistics(quality=stats_quality, novelty=stats_novelty)
+        stats_diversity = tools.Statistics(lambda ind: ind.fitness.values[1])
+        self.stats = tools.MultiStatistics(quality=stats_quality, diversity=stats_diversity)
         self.stats.register("avg", np.mean, axis=0)
         self.stats.register("std", np.std, axis=0)
         self.stats.register("max", np.max, axis=0)
@@ -115,9 +115,9 @@ class Evolution:
 
         if new:
             self.logbook = tools.Logbook()
-            self.logbook.header = "gen", "quality", "novelty"
+            self.logbook.header = "gen", "quality", "diversity"
             self.logbook.chapters["quality"].header = "avg", "std", "max"
-            self.logbook.chapters["novelty"].header = "avg", "std", "max"
+            self.logbook.chapters["diversity"].header = "avg", "std", "max"
 
         record = self.stats.compile(self.population)
         self.logbook.record(gen=generation, **record)
@@ -130,8 +130,8 @@ class Evolution:
 
     def evaluate(self, individual, generation=None, bkp=False):
 
-        fitness_quality = -1
-        fitness_novelty = -1
+        fitness_quality = 0
+        fitness_diversity = 0
 
         individual[0].export_midi('current_song_all')
         if self.go_live:
@@ -141,11 +141,8 @@ class Evolution:
 
             fitness_quality = get_user_input(self.max_score, self.timeout)
 
-        # fix!
-        #fitness_novelty = random.uniform(0, 1)
-
-        # values[0]: fitness_quality, values[1]:fitness_novelty
-        individual.fitness.values = fitness_quality, fitness_novelty
+        # values[0]: fitness_quality, values[1]:fitness_diversity
+        individual.fitness.values = fitness_quality, fitness_diversity
 
         if self.export_genotype:
             file = self.path + '/genotypes/individual_' + individual[0].song_id
@@ -156,8 +153,7 @@ class Evolution:
 
             self.export_pickle(individual, file + '.pkl')
 
-        print('-- evaluated song '+individual[0].song_id +
-              ', quality: '+str(fitness_quality)+' novelty: '+str(fitness_novelty))
+        print('-- evaluated song '+individual[0].song_id + ', quality: '+str(fitness_quality))
 
     def replicate_mutate(self, individual):
         offspring = copy.deepcopy(individual)
@@ -167,20 +163,34 @@ class Evolution:
     def select(self):
         # inserts offspring into population and selects in steady-state
         self.population = self.population + self.offspring
+        self.measure_diversity()
         self.population = self.toolbox.select(self.population)
+
+    def measure_diversity(self):
+        # compares each individual with every other concerning its preset
+        for ind_reference in self.population:
+            preset_uniqueness = 0
+            for ind_comparison in self.population:
+                if ind_reference[0].preset != ind_comparison[0].preset:
+                    preset_uniqueness += 1
+
+            # percentage of the individuals that have a preset different from the one of this individual
+            preset_uniqueness = preset_uniqueness / (len(self.population)-1)
+            ind_reference.fitness.values = ind_reference.fitness.values[0], preset_uniqueness
 
     def plots_summary(self):
 
         gen = self.logbook.select("gen")
         quality_avg = self.logbook.chapters["quality"].select("avg")
         quality_std = self.logbook.chapters["quality"].select("std")
-        novelty_avg = self.logbook.chapters["novelty"].select("avg")
-        novelty_std = self.logbook.chapters["novelty"].select("std")
+        diversity_avg = self.logbook.chapters["diversity"].select("avg")
+        diversity_std = self.logbook.chapters["diversity"].select("std")
 
         fig, ax1 = plt.subplots()
-        ax1.plot(gen, quality_avg, "b-", label="Quality")
+        ax1.plot([int(x) for x in gen], quality_avg, "b-", label="Quality")
         ax1.set_xlabel("Generation")
-        ax1.set_ylabel("Quality", color="b")
+        ax1.set_ylabel("Quality (user)", color="b")
+        ax1.set_ylim(ymin=0, ymax=6)
         for tl in ax1.get_yticklabels():
             tl.set_color("b")
 
@@ -188,13 +198,14 @@ class Evolution:
                          np.array(quality_avg) + np.array(quality_std), alpha=0.2, facecolor='#66B2FF')
 
         ax2 = ax1.twinx()
-        ax2.plot(gen, novelty_avg, "r-", label="Novelty")
-        ax2.set_ylabel("Novelty", color="r")
+        ax2.plot(gen, diversity_avg, "r-", label="Diversity")
+        ax2.set_ylabel("Diversity", color="r")
+        ax2.set_ylim(ymin=0, ymax=1.2)
         for tl in ax2.get_yticklabels():
             tl.set_color("r")
 
-        ax2.fill_between(gen, np.array(novelty_avg) - np.array(novelty_std),
-                         np.array(novelty_avg) + np.array(novelty_std), alpha=0.2, facecolor='#FF9999')
+        ax2.fill_between(gen, np.array(diversity_avg) - np.array(diversity_std),
+                         np.array(diversity_avg) + np.array(diversity_std), alpha=0.2, facecolor='#FF9999')
 
         plt.savefig(self.path + '/evolution_summary.png')
 
@@ -204,7 +215,7 @@ class Evolution:
 
     def cataclysmic_mutations(self, generation):
 
-        # replaces the worst individuals for new random ones
+        # replaces the worst individuals for new random ones: regarding quality
         quality = []
         for ind in self.population:
             quality.append(float(ind.fitness.values[0]))
@@ -240,7 +251,7 @@ class Evolution:
                 experiment_management.load_population(self.population, latest_snapshot, self.population_size)
                 print('\nSnapshot '+str(latest_snapshot)+' loaded.')
 
-            # if there is a offspring to recover
+            # if there is offspring to recover
             if has_offspring:
                 self.offspring = self.toolbox.population()
                 offspring_recovered = experiment_management.load_offspring(self.offspring, latest_snapshot,
@@ -259,6 +270,8 @@ class Evolution:
                         self.next_song_id += 1
                     self.population = self.offspring
 
+                    self.measure_diversity()
+
                     experiment_management.export_snapshot(self.population, generation)
                     self.logs_results(generation)
 
@@ -272,6 +285,7 @@ class Evolution:
 
                     for ind in range(offspring_recovered, self.population_size):
                         self.offspring[ind] = self.new_offspring(self.population[ind])
+
                     self.select()
 
                     experiment_management.export_snapshot(self.population, generation)
@@ -290,12 +304,14 @@ class Evolution:
                 self.initialize(ind, self.next_song_id)
                 self.next_song_id += 1
 
+            self.measure_diversity()
+
             experiment_management.export_snapshot(self.population, generation)
             self.logs_results(generation)
 
         generation += 1
 
-        while generation < self.generations:
+        while generation < self.generations or self.infinite_generations:
 
             print('\n----------- GEN: ', generation)
 
@@ -310,6 +326,7 @@ class Evolution:
                 if (generation+1) % self.cataclysmic_mutations_freqs == 0:
                     print('\nCataclysmic mutations!')
                     self.cataclysmic_mutations(generation)
+                    self.measure_diversity()
 
             experiment_management.export_snapshot(self.population, generation)
 
@@ -319,7 +336,6 @@ class Evolution:
             self.logs_results(generation, new=False)
 
             generation += 1
-
 
     def listen(self, generation, song_id):
 

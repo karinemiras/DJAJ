@@ -9,7 +9,7 @@ class App(QWidget):
     def __init__(self):
         super().__init__()
         super().setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-        self.title = 'User evaluation'
+        self.title = 'Evaluation of song quality'
         self.score = 0
         self.left = 400
         self.top = 400
