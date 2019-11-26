@@ -18,11 +18,8 @@ if args.type == 'random':
 if args.type == 'all':
     demos_styles = Song('').presets
 
-# rock examples
-#demos_styles = [29, 40, 42, 12, 18, 2]
-
 # just choose some
-#demos_styles = [51]
+# demos_styles = [29]
 
 for s in demos_styles:
     song = Song()

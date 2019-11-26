@@ -10,6 +10,7 @@ song.tempo = 120
 song.scale_mode = 'minor'
 song.scale_type = 'pentatonic'
 song.times = 4
+song.num_bars = 48
 song.progression_type = 'blues'
 song.compose()
 song.build_midi()
@@ -28,6 +29,7 @@ song.tempo = 120
 song.scale_mode = 'minor'
 song.scale_type = 'pentatonic'
 song.times = 4
+song.num_bars = 48
 song.progression_type = 'fall'
 song.compose()
 song.build_midi()

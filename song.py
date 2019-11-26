@@ -10,7 +10,7 @@ import random
 
 class Song:
 
-    def __init__(self, _song_id=''):
+    def __init__(self, _song_id='', _num_bars=12, _presets=range(1, 51+1, 1)):
 
         # Identification of the track/individual
         self.song_id = _song_id
@@ -22,7 +22,7 @@ class Song:
         self.scale_type = None
         # Modality of the key
         self.scale_mode = None
-        # All pitchs available within the key
+        # All pitches available within the key
         self.scale_keyboard = None
         # Metronome/speed
         self.tempo = None
@@ -43,7 +43,7 @@ class Song:
         # quaternary is more likely
         self.times_pool = [3] + [4]*5
         # Use multiples of 12
-        self.num_bars = 12
+        self.num_bars = _num_bars
         # Tracks info
         self.tracks = {
             'percussion': 3,
@@ -104,10 +104,10 @@ class Song:
                                     }
 
         # instruments preset
-        self.presets = range(1, 51+1, 1)
+        self.presets = _presets
 
         #  Minimum and maximum speed in BPM.
-        self.tempo_pool = {'min': 90, 'mean': 130, 'std': 30, 'max': 190}
+        self.tempo_pool = {'min': 90, 'mean': 130, 'std': 20, 'max': 160}
 
         # export 'all' tracks together or 'track' by track
         self.tracks_granularity = 'all'

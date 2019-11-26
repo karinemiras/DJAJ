@@ -9,12 +9,12 @@ class App(QWidget):
     def __init__(self):
         super().__init__()
         super().setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-        self.title = 'Evaluation of song quality'
+        self.title = 'Click on the faces to evaluate the previous jam'
         self.score = 0
-        self.left = 400
-        self.top = 400
-        self.width = 740
-        self.height = 250
+        self.left = 240
+        self.top = 300
+        self.width = 1200
+        self.height = 350
         return self.initUI()
 
     def initUI(self):
@@ -23,42 +23,49 @@ class App(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         labelA = QtWidgets.QLabel(self)
-        labelA.setText('Click on a score to evaluate the song you just heard.')
-        labelA.setFont(QtGui.QFont("Arial", 25, QtGui.QFont.Bold))
-        labelA.move(70, 20)
+        labelA.setText('How did you like this jam?')
+        labelA.setFont(QtGui.QFont("Arial", 50, QtGui.QFont.Bold))
+        labelA.setStyleSheet("QLabel {color: #FF9933}")
+        labelA.move(270, 20)
 
-        button1 = QPushButton('1', self)
-        button1.setStyleSheet("background-color:#E50B0B;font:bold;font-size:70px")
-        button1.move(50, 70)
-        button1.resize(120, 100)
+        button1 = QPushButton('', self)
+        button1.setStyleSheet('border-image: url(img/f1.png);')
+        button1.setGeometry(90, 100, 100, 61)
+
+        button1.move(60, 120)
+        button1.resize(190, 190)
         button1.clicked.connect(self.on_click_button1)
 
-        button2 = QPushButton('2', self)
-        button2.setStyleSheet("background-color:#FA6767;font:bold;font-size:70px")
-        button2.move(180, 70)
-        button2.resize(120, 100)
+        button2 = QPushButton('', self)
+        button2.setStyleSheet('border-image: url({})'.format('img/f2.png'))
+        button2.setGeometry(100, 100, 100, 61)
+        button2.move(260, 115)
+        button2.resize(210, 210)
         button2.clicked.connect(self.on_click_button2)
 
-        button3 = QPushButton('3', self)
-        button3.setStyleSheet("background-color:#838383;font:bold;font-size:70px")
-        button3.move(310, 70)
-        button3.resize(120, 100)
+        button3 = QPushButton('', self)
+        button3.setStyleSheet('border-image: url({})'.format('img/f3.png'))
+        button3.setGeometry(100, 100, 100, 61)
+        button3.move(480, 115)
+        button3.resize(200, 200)
         button3.clicked.connect(self.on_click_button3)
 
-        button4 = QPushButton('4', self)
-        button4.setStyleSheet("background-color:#71D488;font:bold;font-size:70px")
-        button4.move(440, 70)
-        button4.resize(120, 100)
+        button4 = QPushButton('', self)
+        button4.setStyleSheet('border-image: url({})'.format('img/f4.png'))
+        button4.setGeometry(100, 100, 100, 61)
+        button4.move(700, 115)
+        button4.resize(200, 200)
         button4.clicked.connect(self.on_click_button4)
 
-        button5 = QPushButton('5', self)
-        button5.setStyleSheet("background-color:#009222;font:bold;font-size:70px")
-        button5.move(570, 70)
-        button5.resize(120, 100)
+        button5 = QPushButton('', self)
+        button5.setStyleSheet('border-image: url({})'.format('img/f5.png'))
+        button5.setGeometry(100, 100, 100, 61)
+        button5.move(910, 110)
+        button5.resize(220, 220)
         button5.clicked.connect(self.on_click_button5)
 
         button_exit = QPushButton('', self)
-        button_exit.move(10, 230)
+        button_exit.move(10, 390)
         button_exit.resize(20, 10)
         button_exit.clicked.connect(self.quit_aj)
 

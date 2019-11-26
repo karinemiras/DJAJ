@@ -26,6 +26,8 @@ class Evolution:
                  _cataclysmic_mutations_size=2,
                  _max_score=5,
                  _timeout=10,
+                 _num_bars=12,
+                 _presets=range(1, 51 + 1, 1),
                  _go_live=True,
                  _infinite_generations=False):
 
@@ -39,6 +41,8 @@ class Evolution:
         self.cataclysmic_mutations_size = _cataclysmic_mutations_size
         self.max_score = _max_score
         self.timeout = _timeout
+        self.num_bars = _num_bars
+        self.presets = _presets
         self.go_live = _go_live
         self.infinite_generations = _infinite_generations
 
@@ -97,6 +101,8 @@ class Evolution:
 
     def new_genotype(self):
         song = Song()
+        song.num_bars = self.num_bars
+        song.presets = self.presets
         return song
 
     def new_offspring(self, individual):

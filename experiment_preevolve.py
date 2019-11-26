@@ -9,7 +9,9 @@ _generations = 5
 _cataclysmic_mutations_freqs = 0
 _cataclysmic_mutations_size = 0
 _max_score = 5
-_timeout = 20
+_timeout = 30
+_num_bars = 12
+_presets = range(1, 51+1, 1)
 _go_live = True
 _infinite_generations = False
 
@@ -23,6 +25,8 @@ experiment = Evolution(
                          _cataclysmic_mutations_size,
                          _max_score,
                          _timeout,
+                         _num_bars,
+                         _presets,
                          _go_live,
                          _infinite_generations
         )
