@@ -1,10 +1,11 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
-from PyQt5.QtCore import pyqtSlot, QTimer
+from PyQt5.QtCore import pyqtSlot
 from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5.QtCore import Qt
 
 
-class App(QWidget):
+class AppScore(QWidget):
 
     def __init__(self):
         super().__init__()
@@ -21,6 +22,10 @@ class App(QWidget):
 
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+
+        p = self.palette()
+        p.setColor(self.backgroundRole(), Qt.black)
+        self.setPalette(p)
 
         labelA = QtWidgets.QLabel(self)
         labelA.setText('How did you like this jam?')
@@ -99,4 +104,5 @@ class App(QWidget):
     @pyqtSlot()
     def quit_aj(self):
         sys.exit()
+
 

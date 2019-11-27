@@ -1,6 +1,6 @@
 from evolution import *
 
-experiment_name = 'default_experiment'
+experiment_name = 'test'
 
 _num_objectives = 2
 _mutation_size = 0.3

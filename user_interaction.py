@@ -1,4 +1,5 @@
-from interface import *
+from interface_score import *
+from interface_info import *
 import random
 
 
@@ -17,7 +18,7 @@ def start_timer(slot, timeout=1, interval=1000):
 
 
 def timer_func(count, timeout):
-    print('You have:', timeout-count, ' seconds to choose...')
+    print(timeout-count, ' seconds left...')
     if count >= timeout:
         QtCore.QCoreApplication.quit()
 
@@ -25,7 +26,7 @@ def timer_func(count, timeout):
 def get_user_input(max_score, timeout):
 
     app = QApplication(sys.argv)
-    ap = App()
+    ap = AppScore()
     start_timer(timer_func, timeout)
     app.exec_()
 
@@ -36,5 +37,33 @@ def get_user_input(max_score, timeout):
         print("\nSorry, your time expired or your choice was invalid. A random choice was made for you.\n")
 
     return score
+
+
+def show_song_info(timeout,
+                   times,
+                   beat,
+                   tempo,
+                   key,
+                   scale_mode
+                   ):
+
+    app = QApplication(sys.argv)
+    ap = AppInfo(timeout,
+                 times,
+                 beat,
+                 tempo,
+                 key,
+                 scale_mode)
+    # weird that this works: the timer is being used to proceed to the song playing, and window is closed after it plays
+    start_timer(timer_func, timeout)
+    app.exec_()
+
+    return ap, app
+
+
+def update_loading_label(ap, app):
+    ap.loading.setText('Playing...')
+    start_timer(timer_func, 1)
+    app.exec()
 
 

@@ -2,7 +2,7 @@ from song import Song
 from golive import *
 from mutate import *
 from experiment_management import *
-from user_input import *
+from user_interaction import *
 
 from deap import base
 from deap import creator
@@ -248,7 +248,7 @@ class Evolution:
             generation = latest_snapshot
             self.next_song_id = latest_id + 1
 
-            if latest_snapshot == self.generations - 1:
+            if (latest_snapshot == self.generations - 1) and not self.infinite_generations:
                 print('\nExperiment is already complete.')
                 return
 
