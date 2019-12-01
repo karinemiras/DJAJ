@@ -7,6 +7,7 @@ from midiutil import MIDIFile
 
 import numpy as np
 import random
+import pprint
 
 class Song:
 
@@ -31,6 +32,7 @@ class Song:
         self.progression = []
         self.progression_type = None
         self.preset = None
+        self.karaoke_chords = []
 
         self.duration_pool = {
                             'semibreve': 1*4,
@@ -596,6 +598,37 @@ class Song:
             self.add_notes_midi()
             if export_phenotype:
                 self.export_midi(path+'/phenotypes/'+song_id)
+
+    def build_karaoke(self):
+
+        num_bars_karaoke = 10
+        ini_indx = 0
+        fin_indx = num_bars_karaoke
+        chords = []
+        #print('nummmm',self.num_)
+        for chord in self.genotype['harmony']:
+            mode = ''
+            if len(chord) == 0:
+                chords.append('-')
+            else:
+                if abs(chord[0]['pitch']-chord[1]['pitch']) % 2 > 0:
+                    mode = 'm'
+
+                chord = self.pitch_labels[chord[0]['pitch']] + mode
+                chords.append(chord)
+
+        for i in range(0, len(chords), num_bars_karaoke-1):
+
+            chords_sequence = chords[ini_indx:fin_indx]
+            if len(chords_sequence) < num_bars_karaoke:
+                chords_sequence.extend([''] * (num_bars_karaoke-len(chords_sequence)))
+            self.karaoke_chords.append(chords_sequence)
+
+            ini_indx = fin_indx - 1
+            if len(chords) - fin_indx < num_bars_karaoke - 1:
+                fin_indx = len(chords)
+            else:
+                fin_indx = fin_indx + num_bars_karaoke - 1
 
     def add_notes_midi(self, track_export=None):
 

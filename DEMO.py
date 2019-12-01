@@ -25,6 +25,7 @@ for s in demos_styles:
     song = Song()
     song.initialize_song()
     song.build_midi()
+    song.build_karaoke()
     song.preset = s
     song.export_midi('current_song_all')
 

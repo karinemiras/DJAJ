@@ -97,6 +97,7 @@ class Evolution:
         individual[0].song_id = str(next_song_id)
         individual[0].initialize_song()
         individual[0].build_midi(self.path, individual[0].song_id, self.export_phenotype)
+        individual[0].build_karaoke()
         self.evaluate(individual, generation, bkp)
 
     def new_genotype(self):
@@ -110,6 +111,7 @@ class Evolution:
         offspring[0].song_id = str(self.next_song_id)
         self.next_song_id += 1
         offspring[0].build_midi(self.path, offspring[0].song_id, self.export_phenotype)
+        offspring[0].build_karaoke()
         self.evaluate(offspring)
         return offspring
 
@@ -367,6 +369,7 @@ class Evolution:
             pprint(vars(song))
 
             song.build_midi()
+            song.build_karaoke()
             song.export_midi('current_song_all')
             went_live = False
             while not went_live:

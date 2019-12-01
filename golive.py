@@ -12,7 +12,8 @@ def go_live_ableton(song, short=False):
                                  song.times,
                                  song.beat,
                                  song.tempo,
-                                 song.pitch_labels[song.key],
+                                 song.key,
+                                 song.pitch_labels,
                                  song.scale_mode)
 
         os.system('all_params='
@@ -25,19 +26,33 @@ def go_live_ableton(song, short=False):
         set.scan(scan_devices=True)
         set.tempo = song.tempo
 
-        update_loading_label(ap, app)
+        ap, app = update_loading_label(ap, app)
 
         # play all tracks
         for t in set.tracks:
             t.clips[0].play()
 
-        # wait for song to finish playing: complete or 2 seconds
+        # wait for song to finish playing: complete or 2 seconds only
         if not short:
-            time.sleep(song.get_song_duration())
+            bar_karaoke = 0
+            chords_sequence = 0
+
+            for bar in range(0+1, song.num_bars+1):
+
+                ap, app, delay_of_timer = update_chords_label(ap, app, bar,
+                                                              song.num_bars,
+                                                              song.karaoke_chords[chords_sequence],
+                                                              bar_karaoke)
+                time.sleep((song.get_song_duration() / song.num_bars)-delay_of_timer)
+                bar_karaoke += 1
+                if bar_karaoke == 9:
+                    chords_sequence += 1
+                    bar_karaoke = 0
         else:
             time.sleep(2)
 
         # stop all tracks
+        os.system('osascript as_focus.scpt')
         for t in set.tracks:
             t.clips[0].stop()
 

@@ -70,8 +70,9 @@ class AppScore(QWidget):
         button5.clicked.connect(self.on_click_button5)
 
         button_exit = QPushButton('', self)
+        button_exit.move(10, 100)
         button_exit.move(10, 390)
-        button_exit.resize(20, 10)
+        #button_exit.resize(20, 10)
         button_exit.clicked.connect(self.quit_aj)
 
         self.show()

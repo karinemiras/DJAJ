@@ -2,8 +2,8 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 from PyQt5.QtCore import pyqtSlot, QByteArray
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtGui import QMovie
 from PyQt5.QtCore import Qt
+
 
 class AppInfo(QWidget):
 
@@ -13,6 +13,7 @@ class AppInfo(QWidget):
                  _beat,
                  _tempo,
                  _key,
+                 _pitch_labels,
                  _scale_mode):
 
         super().__init__()
@@ -20,16 +21,18 @@ class AppInfo(QWidget):
         self.title = 'Info about the current jam'
         self.score = 0
         self.left = 50
-        self.top = 175
+        self.top = 100
         self.width = 1580
-        self.height = 185
+        self.height = 260
         self.timeout = _timeout
         self.times = _times
         self.beat = _beat
         self.tempo = _tempo
         self.key = _key
+        self.pitch_labels = _pitch_labels
         self.scale_mode = _scale_mode
         self.loading = ''
+        self.chords = []
 
         return self.initUI()
 
@@ -50,7 +53,7 @@ class AppInfo(QWidget):
         labelA.move(5, 20)
 
         labelB = QtWidgets.QLabel(self)
-        labelB.setText(str(self.key) + ' ' + self.scale_mode)
+        labelB.setText(str(self.pitch_labels[self.key]) + ' ' + self.scale_mode)
         labelB.setFont(QtGui.QFont("Arial", 80, QtGui.QFont.Bold))
         labelB.setStyleSheet("QLabel {color: #FF9933}")
         labelB.move(195, 20)
@@ -80,16 +83,22 @@ class AppInfo(QWidget):
         labelF.move(1245, 20)
 
         self.loading = QtWidgets.QLabel(self)
-        self.loading.setText('Loading...')
+        self.loading.setText('Loading...          ')
         self.loading.setFont(QtGui.QFont("Arial", 50, QtGui.QFont.Bold))
         self.loading.setStyleSheet("QLabel {color: #aa0000}")
         self.loading.move(635, 120)
 
-        # self.movie = QMovie('img/loading.gif', QByteArray(), self)
-        # self.movie.setCacheMode(QMovie.CacheAll)
-        # self.movie.setSpeed(100)
-        # self.movie_screen.setMovie(self.movie)
-        # self.movie.start()
+        num_chords = 10
+        ini_x = 150
+        ini_y = 200
+
+        for c in range(0, num_chords):
+            self.chords.append(QtWidgets.QLabel(self))
+            self.chords[-1].setText('------ ')
+            self.chords[-1].setFont(QtGui.QFont("Arial", 50, QtGui.QFont.Bold))
+            self.chords[-1].setStyleSheet("QLabel {color: #aa0000}")
+            self.chords[-1].move(ini_x, ini_y)
+            ini_x += 130
 
         self.show()
 

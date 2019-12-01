@@ -44,6 +44,7 @@ def show_song_info(timeout,
                    beat,
                    tempo,
                    key,
+                   pitch_labels,
                    scale_mode
                    ):
 
@@ -53,8 +54,10 @@ def show_song_info(timeout,
                  beat,
                  tempo,
                  key,
+                 pitch_labels,
                  scale_mode)
-    # weird that this works: the timer is being used to proceed to the song playing, and window is closed after it plays
+    # weird that this works: the timer is being used to proceed to the song playing,
+    # and window is closed after it plays. maybe coz this method is called from a trycatch?
     start_timer(timer_func, timeout)
     app.exec_()
 
@@ -63,7 +66,28 @@ def show_song_info(timeout,
 
 def update_loading_label(ap, app):
     ap.loading.setText('Playing...')
-    start_timer(timer_func, 1)
+    start_timer(timer_func, 0)
     app.exec()
+
+    return ap, app
+
+
+def update_chords_label(ap, app, bar, bars, chords, bar_karaoke):
+
+    ap.loading.setText('Playing '+str(bar)+'/'+str(bars))
+
+    for c in range(0, len(ap.chords)):
+        ap.chords[c].setText(chords[c]+' ')
+
+        if c == bar_karaoke:
+            ap.chords[c].setStyleSheet("QLabel {color: #ffffff}")
+        else:
+            ap.chords[c].setStyleSheet("QLabel {color: #ff0000}")
+
+    start_timer(timer_func, 0)
+    app.exec()
+    delay_of_timer = 1
+
+    return ap, app, delay_of_timer
 
 
