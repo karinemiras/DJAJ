@@ -66,13 +66,13 @@ class AppScore(QWidget):
         button5.setStyleSheet('border-image: url({})'.format('img/f5.png'))
         button5.setGeometry(100, 100, 100, 61)
         button5.move(910, 110)
-        button5.resize(220, 220)
+        button5.resize(215, 240)
         button5.clicked.connect(self.on_click_button5)
 
         button_exit = QPushButton('', self)
-        button_exit.move(10, 100)
-        button_exit.move(10, 390)
-        #button_exit.resize(20, 10)
+        button_exit.setStyleSheet("background-color: rgb(40,40,40);");
+        button_exit.move(1180, 10)
+        button_exit.resize(5, 5)
         button_exit.clicked.connect(self.quit_aj)
 
         self.show()

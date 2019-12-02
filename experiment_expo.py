@@ -3,7 +3,7 @@ from evolution import *
 experiment_name = 'exposition'
 
 _num_objectives = 2
-_mutation_size = 0.3
+_mutation_size = 0.5
 _population_size = 30
 _generations = 0
 _cataclysmic_mutations_freqs = 10

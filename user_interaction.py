@@ -65,7 +65,7 @@ def show_song_info(timeout,
 
 
 def update_loading_label(ap, app):
-    ap.loading.setText('Playing...')
+    ap.loading.setText('Get ready!')
     start_timer(timer_func, 0)
     app.exec()
 

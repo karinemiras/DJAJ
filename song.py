@@ -234,9 +234,22 @@ class Song:
                 self.progression_type = 'free'
 
         if self.progression_type == 'free':
+
             self.progression.append(self.key)
-            for idx_piece in range(0, self.num_bars - 2):
-                self.progression.append(random.choice(local_scale_keyboard))
+            composed_bars = 0
+            repetitions = np.array([1, 2, 3, 4])
+            repetitions_chances = repetitions / repetitions.sum()
+
+            while composed_bars < self.num_bars - 2:
+
+                repetition = np.random.choice(repetitions, 1, p=repetitions_chances)[0]
+                key = random.choice(local_scale_keyboard)
+                if composed_bars + repetition > self.num_bars - 2:
+                    repetition = self.num_bars - 2 - composed_bars
+                for i in range(0, repetition):
+                    self.progression.append(key)
+                    composed_bars += 1
+
             self.progression.append(self.key)
 
     def percussion_scale_keyboard(self):
@@ -605,7 +618,7 @@ class Song:
         ini_indx = 0
         fin_indx = num_bars_karaoke
         chords = []
-        #print('nummmm',self.num_)
+
         for chord in self.genotype['harmony']:
             mode = ''
             if len(chord) == 0:

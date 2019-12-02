@@ -14,7 +14,6 @@ song.num_bars = 48
 song.progression_type = 'blues'
 song.compose()
 song.build_midi()
-song.build_karaoke()
 song.export_midi('current_song_all')
 went_live = False
 while not went_live:

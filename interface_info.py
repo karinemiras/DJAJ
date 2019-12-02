@@ -21,7 +21,7 @@ class AppInfo(QWidget):
         self.title = 'Info about the current jam'
         self.score = 0
         self.left = 50
-        self.top = 100
+        self.top = 70
         self.width = 1580
         self.height = 260
         self.timeout = _timeout
@@ -88,6 +88,12 @@ class AppInfo(QWidget):
         self.loading.setStyleSheet("QLabel {color: #aa0000}")
         self.loading.move(635, 120)
 
+        button_exit = QPushButton('', self)
+        button_exit.setStyleSheet("background-color: rgb(40,40,40);");
+        button_exit.move(1555, 5)
+        button_exit.resize(5, 5)
+        button_exit.clicked.connect(self.quit_aj)
+
         num_chords = 10
         ini_x = 150
         ini_y = 200
@@ -102,6 +108,7 @@ class AppInfo(QWidget):
 
         self.show()
 
-
-
+    @pyqtSlot()
+    def quit_aj(self):
+        sys.exit()
 
