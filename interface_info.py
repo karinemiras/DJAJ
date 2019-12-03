@@ -83,7 +83,7 @@ class AppInfo(QWidget):
         labelF.move(1245, 20)
 
         self.loading = QtWidgets.QLabel(self)
-        self.loading.setText('Loading...          ')
+        self.loading.setText('...Wait...          ')
         self.loading.setFont(QtGui.QFont("Arial", 50, QtGui.QFont.Bold))
         self.loading.setStyleSheet("QLabel {color: #aa0000}")
         self.loading.move(635, 120)

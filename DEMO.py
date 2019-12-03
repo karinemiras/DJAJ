@@ -21,8 +21,6 @@ if args.type == 'all':
 # just choose some
 #demos_styles = [1]
 
-
-
 for s in demos_styles:
     song = Song()
     song.initialize_song()

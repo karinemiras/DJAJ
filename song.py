@@ -53,7 +53,7 @@ class Song:
             'harmony': 1,
             'solo': 2
         }
-        self.melody_granularities = [1, 2, 3, 4]
+        self.melody_granularities = [2, 3, 4]
         # Channels left and right
         self.num_channels = 2
         # Volumes by track
@@ -74,7 +74,7 @@ class Song:
         self.pitch_pool = range(self.low_ref1, self.low_ref1+12, 1)
         self.num_octaves = 5
         self.drummed_prob = 1
-        self.silent_bars = 0.1
+        self.silent_bars = 0.5
         # Labels for all pitches of the keyboard, regardless key
         self.pitch_labels = {}
 
@@ -109,7 +109,7 @@ class Song:
         self.presets = _presets
 
         #  Minimum and maximum speed in BPM.
-        self.tempo_pool = {'min': 90, 'mean': 130, 'std': 20, 'max': 160}
+        self.tempo_pool = {'min': 90, 'mean': 120, 'std': 10, 'max': 150}
 
         # export 'all' tracks together or 'track' by track
         self.tracks_granularity = 'all'
