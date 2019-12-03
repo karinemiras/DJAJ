@@ -23,6 +23,7 @@ if args.type == 'all':
 
 for s in demos_styles:
     song = Song()
+    song.num_bars = 12
     song.initialize_song()
     song.build_midi()
     song.build_karaoke()

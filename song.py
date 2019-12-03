@@ -5,6 +5,7 @@ Author: Karine Miras - 9/2019
 from midi2audio import FluidSynth
 from midiutil import MIDIFile
 
+import math
 import numpy as np
 import random
 import pprint
@@ -238,10 +239,10 @@ class Song:
             self.progression.append(self.key)
             composed_bars = 0
             repetitions = np.array([1, 2, 3, 4])
-            repetitions_chances = repetitions / repetitions.sum()
+            repetitions_chances = np.array([0.20, 0.20, 0.25, 0.35])
+            # repetitions_chances = repetitions / repetitions.sum()
 
             while composed_bars < self.num_bars - 2:
-
                 repetition = np.random.choice(repetitions, 1, p=repetitions_chances)[0]
                 key = random.choice(local_scale_keyboard)
                 if composed_bars + repetition > self.num_bars - 2:
