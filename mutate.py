@@ -47,22 +47,22 @@ def mutate_preset(song):
 def new_melody_bar(song, track):
 
     if track == 'solo':
-        local_scale_keyboard = song.solo_scale_keyboard()
+        local_scale_keyboard_filtered = song.solo_scale_keyboard_filtered()
     if track == 'percussion':
-        local_scale_keyboard = song.percussion_scale_keyboard()
+        local_scale_keyboard_filtered = song.percussion_scale_keyboard_filtered()
 
     bar = random.choice(range(0, song.num_bars))
     melody_timeline = bar * song.times * song.beat
 
     if bar > 0 and len(song.genotype[track][bar-1]) > 0:
         idx_previous_pitch = song.genotype[track][bar-1][-1]['pitch']
-        idx_previous_pitch = local_scale_keyboard.index(idx_previous_pitch)
+        idx_previous_pitch = local_scale_keyboard_filtered.index(idx_previous_pitch)
     else:
         idx_previous_pitch = None
 
     melody_bar = []
     song.get_melody_bar(melody_bar,
-                        local_scale_keyboard,
+                        local_scale_keyboard_filtered,
                         song.tracks[track],
                         song.tracks[track],
                         melody_timeline,
@@ -115,8 +115,8 @@ def new_chord(song):
         # changes base harmony
         harmony_timeline = bar * song.times * song.beat
         chord = []
-        local_scale_keyboard = song.progression_scale_keyboard()
-        pitch = random.choice(local_scale_keyboard)
+        local_scale_keyboard_filtered = song.progression_scale_keyboard_filtered()
+        pitch = random.choice(local_scale_keyboard_filtered)
 
         song.compose_chord(chord, pitch,  song.genotype['harmony'][bar][0]['track'],
                                           song.genotype['harmony'][bar][0]['channel'], harmony_timeline)

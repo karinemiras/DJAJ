@@ -18,6 +18,7 @@ _presets = [16, 17, 18, 25, 26, 28,
             48, 49]
 _go_live = True
 _infinite_generations = True
+_user_evaluation = True
 
 experiment = Evolution(
                          experiment_name,
@@ -32,7 +33,8 @@ experiment = Evolution(
                          _num_bars,
                          _presets,
                          _go_live,
-                         _infinite_generations
+                         _infinite_generations,
+                         _user_evaluation
         )
 
 experiment.evolve()

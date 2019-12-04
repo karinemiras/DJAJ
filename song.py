@@ -25,7 +25,8 @@ class Song:
         # Modality of the key
         self.scale_mode = None
         # All pitches available within the key
-        self.scale_keyboard = None
+        self.scale_keyboard_full = None
+        self.scale_keyboard_filtered = None
         # Metronome/speed
         self.tempo = None
         self.times = None
@@ -154,7 +155,7 @@ class Song:
         self.build_pitch_labels()
         self.build_scale()
 
-        self.compose_progressions()
+        self.compose_progression()
 
         self.compose_bass(track=self.tracks['bass'],
                           channel=self.tracks['bass'])
@@ -174,36 +175,52 @@ class Song:
 
     def build_scale(self):
 
+        # intervals_filtered is for solo, while intervals_full is for harmony/bass
+
         if self.scale_mode == 'minor':
-            intervals = [self.intervals_dic['T'], self.intervals_dic['3m'],
-                         self.intervals_dic['4J'], self.intervals_dic['5J'],
-                         self.intervals_dic['7m']]
+            intervals_filtered = [self.intervals_dic['T'], self.intervals_dic['3m'],
+                                  self.intervals_dic['4J'], self.intervals_dic['5J'],
+                                  self.intervals_dic['7m']]
         else:
-            intervals = [self.intervals_dic['T'], self.intervals_dic['2M'],
-                         self.intervals_dic['3M'], self.intervals_dic['5J'],
-                         self.intervals_dic['6M']]
+            intervals_filtered = [self.intervals_dic['T'], self.intervals_dic['2M'],
+                                  self.intervals_dic['3M'], self.intervals_dic['5J'],
+                                  self.intervals_dic['6M']]
+
+        intervals_full = list.copy(intervals_filtered)
+
+        if self.scale_mode == 'minor':
+            intervals_full.extend([self.intervals_dic['2M'], self.intervals_dic['6m']])
+        else:
+            intervals_full.extend([self.intervals_dic['7M'], self.intervals_dic['4J']])
 
         # Pentablues has an extra interval.
         if self.scale_type == 'pentablues':
             if self.scale_mode == 'minor':
-                intervals.insert(3, intervals[2] + self.intervals_dic['2m'])
+                intervals_filtered.insert(3, intervals_filtered[2] + self.intervals_dic['2m'])
             else:
-                intervals.insert(2, intervals[1] + self.intervals_dic['2m'])
+                intervals_filtered.insert(2, intervals_filtered[1] + self.intervals_dic['2m'])
 
         # Multiple full octaves with their due intervals.
-        self.scale_keyboard = [None] * (self.num_octaves * len(intervals))
+        self.scale_keyboard_filtered = [None] * (self.num_octaves * len(intervals_filtered))
+        self.scale_keyboard_full = [None] * (self.num_octaves * len(intervals_full))
 
-        for idx, interval in enumerate(intervals):
+        for idx, interval in enumerate(intervals_filtered):
             for octave in range(0, self.num_octaves):
-                self.scale_keyboard[idx + len(intervals) * octave] = self.key + interval + octave * 12
+                self.scale_keyboard_filtered[idx + len(intervals_filtered) * octave] = self.key + interval + octave * 12
 
-    def progression_scale_keyboard(self):
-        keyboard = list(filter(lambda x: x < self.low_ref2 + 12, self.scale_keyboard))
+        for idx, interval in enumerate(intervals_full):
+            for octave in range(0, self.num_octaves):
+                self.scale_keyboard_full[idx + len(intervals_full) * octave] = self.key + interval + octave * 12
+
+    def progression_scale_keyboard_prog(self):
+        keyboard = list(filter(lambda x: x < self.key + 12, self.scale_keyboard_full))
+        print('har',len(keyboard))
+        print(keyboard)
         return keyboard
 
-    def compose_progressions(self):
+    def compose_progression(self):
 
-        local_scale_keyboard = self.progression_scale_keyboard()
+        local_scale_keyboard_prog = self.progression_scale_keyboard_prog()
 
         # using bar as unit
         self.progression = []
@@ -240,19 +257,22 @@ class Song:
             self.progression.append(self.key)
             composed_bars = 0
             repetitions = np.array([1, 2, 3, 4])
-            repetitions_chances = np.array([0.20, 0.20, 0.25, 0.35])
+            repetitions_chances = np.array([0.30, 0.35, 0.20, 0.15])
             # repetitions_chances = repetitions / repetitions.sum()
 
             while composed_bars < self.num_bars - 2:
                 repetition = np.random.choice(repetitions, 1, p=repetitions_chances)[0]
-                key = random.choice(local_scale_keyboard)
+                key = random.choice(local_scale_keyboard_prog)
                 if composed_bars + repetition > self.num_bars - 2:
                     repetition = self.num_bars - 2 - composed_bars
+
                 for i in range(0, repetition):
                     self.progression.append(key)
                     composed_bars += 1
 
             self.progression.append(self.key)
+
+        print(self.progression)
 
     def percussion_scale_keyboard(self):
         keyboard = list(range(self.low_ref1, self.low_ref1 + 24))
@@ -317,17 +337,18 @@ class Song:
 
         self.genotype['percussion'] = percussion
 
-    def solo_scale_keyboard(self):
+    def solo_scale_keyboard_filtered(self):
 
         keyboard = list(filter(lambda x: x >= self.low_ref2
                                      and x <= self.low_ref2 + self.melody_reach,
-                        self.scale_keyboard))
+                        self.scale_keyboard_filtered))
+        print('mel',len(keyboard))
         return keyboard
 
     def compose_solo(self, track, channel):
 
         solo = []
-        local_scale_keyboard = self.solo_scale_keyboard()
+        local_scale_keyboard_filtered = self.solo_scale_keyboard_filtered()
         idx_previous_pitch = None
         solo_timeline = 0
 
@@ -340,7 +361,7 @@ class Song:
                 idx_previous_pitch = None
             else:
                 solo_timeline = self.get_melody_bar(melody_bar,
-                                                    local_scale_keyboard,
+                                                    local_scale_keyboard_filtered,
                                                     track,
                                                     channel,
                                                     solo_timeline,
@@ -349,14 +370,14 @@ class Song:
 
         self.genotype['solo'] = solo
 
-    def get_melody_bar(self, melody_bar, local_scale_keyboard, track, channel, melody_timeline, idx_previous_pitch):
+    def get_melody_bar(self, melody_bar, local_scale_keyboard_filtered, track, channel, melody_timeline, idx_previous_pitch):
 
         total_time_bar = 0
         while total_time_bar < self.times * self.beat:
 
             duration = self.get_melody_duration()
             if total_time_bar + duration <= self.times * self.beat:
-                pitch, idx_previous_pitch = self.get_melody_pitch(local_scale_keyboard, idx_previous_pitch)
+                pitch, idx_previous_pitch = self.get_melody_pitch(local_scale_keyboard_filtered, idx_previous_pitch)
 
                 # rest is added as a note, but accounts in the timeline
                 if pitch != 0:
@@ -383,13 +404,13 @@ class Song:
 
         return duration
 
-    def get_melody_pitch(self, local_scale_keyboard, idx_previous_pitch):
+    def get_melody_pitch(self, local_scale_keyboard_filtered, idx_previous_pitch):
 
         if idx_previous_pitch is None:
-            idx_pitch = random.choice(range(0, len(local_scale_keyboard)))
-            pitch = local_scale_keyboard[idx_pitch]
+            idx_pitch = random.choice(range(0, len(local_scale_keyboard_filtered)))
+            pitch = local_scale_keyboard_filtered[idx_pitch]
         else:
-            idx_distances = np.arange(0, len(local_scale_keyboard))
+            idx_distances = np.arange(0, len(local_scale_keyboard_filtered))
             list_distances = abs(idx_distances - idx_previous_pitch)
             list_distances = 1 / (list_distances + 1)
             melody_granularity = random.choice(self.melody_granularities)
@@ -402,11 +423,11 @@ class Song:
 
             # the more distant a pitch, the less likely it is to be selected
             idx_pitch = np.random.choice(idx_distances, 1, p=list_distances)[0]
-            pitch = local_scale_keyboard[idx_pitch]
+            pitch = local_scale_keyboard_filtered[idx_pitch]
 
             # the pitches more than an octave higher than the previous pitch became rests
 
-            if abs(local_scale_keyboard[idx_pitch] - local_scale_keyboard[idx_previous_pitch]) > 12:
+            if abs(local_scale_keyboard_filtered[idx_pitch] - local_scale_keyboard_filtered[idx_previous_pitch]) > 12:
                 # additionally, there is a chance the note becomes a rest anyway???
                 # or random.uniform(0, 1) <= 0.15:
                 pitch = 0
@@ -554,7 +575,7 @@ class Song:
                       'duration': duration, 'time': harmony_timeline})
 
         pitch_third = pitch + self.intervals_dic['3m']
-        if self.scale_keyboard.count(pitch) == 0:
+        if self.scale_keyboard_full.count(pitch_third) == 0:
             pitch_third += 1
         chord.append({'track': track, 'channel': channel, 'pitch': pitch_third,
                       'duration': duration, 'time': harmony_timeline})
@@ -562,7 +583,7 @@ class Song:
         chord.append({'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
                       'duration': duration, 'time': harmony_timeline})
         harmony_timeline = harmony_timeline + duration
-
+        print(chord)
         self.inversion(chord)
 
         return harmony_timeline

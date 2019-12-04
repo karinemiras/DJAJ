@@ -29,7 +29,8 @@ class Evolution:
                  _num_bars=12,
                  _presets=range(1, 51 + 1, 1),
                  _go_live=True,
-                 _infinite_generations=False):
+                 _infinite_generations=False,
+                 _user_evaluation=False):
 
         self.experiment_name = experiment_name
 
@@ -45,6 +46,7 @@ class Evolution:
         self.presets = _presets
         self.go_live = _go_live
         self.infinite_generations = _infinite_generations
+        self.user_evaluation = _user_evaluation
 
         self.population = None
         self.offspring = None
@@ -147,7 +149,8 @@ class Evolution:
             while not went_live:
                 went_live = go_live_ableton(individual[0])
 
-            fitness_quality = get_user_input(self.max_score, self.timeout)
+            if self.user_evaluation:
+                fitness_quality = get_user_input(self.max_score, self.timeout)
 
         # values[0]: fitness_quality, values[1]:fitness_diversity
         individual.fitness.values = fitness_quality, fitness_diversity
