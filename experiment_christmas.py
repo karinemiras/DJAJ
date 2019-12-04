@@ -4,13 +4,13 @@ experiment_name = 'christmas_jam'
 
 _num_objectives = 2
 _mutation_size = 0.5
-_population_size = 30
+_population_size = 10
 _generations = 0
 _cataclysmic_mutations_freqs = 3
 _cataclysmic_mutations_size = 5
 _max_score = 5
 _timeout = 60
-_num_bars = 36
+_num_bars = 24
 # only classic and chill ones: no keyboard soling, neither distorted guitar
 _presets = [16, 17, 18, 25, 26, 28,
             30, 31, 32, 33, 34, 35, 36,

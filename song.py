@@ -111,15 +111,16 @@ class Song:
         self.presets = _presets
 
         #  Minimum and maximum speed in BPM.
-        self.tempo_pool = {'min': 90, 'mean': 120, 'std': 10, 'max': 150}
+        self.tempo_pool = {'min': 90, 'mean': 130, 'std': 20, 'max': 180}
 
         # export 'all' tracks together or 'track' by track
         self.tracks_granularity = 'all'
 
     def build_pitch_labels(self):
 
+       # accidents = ['#', 'b']
         pitch_labels_basic ={36: 'C',
-                             37: 'D#',
+                             37: 'Db',
                              38: 'D',
                              39: 'Eb',
                              40: 'E',
@@ -142,7 +143,7 @@ class Song:
                                  self.tempo_pool['min']),
                              self.tempo_pool['max']))
         self.key = random.choice(self.pitch_pool)
-        self.silent_bars = random.uniform(0.1, 0.5)
+        self.silent_bars = random.uniform(0.1, 0.3)
         self.scale_mode = random.choice(self.scale_modes)
         self.scale_type = random.choice(self.scale_types)
         self.times = random.choice(self.times_pool)
@@ -212,15 +213,13 @@ class Song:
             for octave in range(0, self.num_octaves):
                 self.scale_keyboard_full[idx + len(intervals_full) * octave] = self.key + interval + octave * 12
 
-    def progression_scale_keyboard_prog(self):
+    def progression_scale_keyboard(self):
         keyboard = list(filter(lambda x: x < self.key + 12, self.scale_keyboard_full))
-        print('har',len(keyboard))
-        print(keyboard)
         return keyboard
 
     def compose_progression(self):
 
-        local_scale_keyboard_prog = self.progression_scale_keyboard_prog()
+        local_scale_keyboard = self.progression_scale_keyboard()
 
         # using bar as unit
         self.progression = []
@@ -257,12 +256,12 @@ class Song:
             self.progression.append(self.key)
             composed_bars = 0
             repetitions = np.array([1, 2, 3, 4])
-            repetitions_chances = np.array([0.30, 0.35, 0.20, 0.15])
+            repetitions_chances = np.array([0.35, 0.40, 0.15, 0.10])
             # repetitions_chances = repetitions / repetitions.sum()
 
             while composed_bars < self.num_bars - 2:
                 repetition = np.random.choice(repetitions, 1, p=repetitions_chances)[0]
-                key = random.choice(local_scale_keyboard_prog)
+                key = random.choice(local_scale_keyboard)
                 if composed_bars + repetition > self.num_bars - 2:
                     repetition = self.num_bars - 2 - composed_bars
 
@@ -271,8 +270,6 @@ class Song:
                     composed_bars += 1
 
             self.progression.append(self.key)
-
-        print(self.progression)
 
     def percussion_scale_keyboard(self):
         keyboard = list(range(self.low_ref1, self.low_ref1 + 24))
@@ -342,7 +339,6 @@ class Song:
         keyboard = list(filter(lambda x: x >= self.low_ref2
                                      and x <= self.low_ref2 + self.melody_reach,
                         self.scale_keyboard_filtered))
-        print('mel',len(keyboard))
         return keyboard
 
     def compose_solo(self, track, channel):
@@ -577,13 +573,18 @@ class Song:
         pitch_third = pitch + self.intervals_dic['3m']
         if self.scale_keyboard_full.count(pitch_third) == 0:
             pitch_third += 1
+
+        pitch_fifth = pitch + self.intervals_dic['5J']
+        if self.scale_keyboard_full.count(pitch_fifth) == 0:
+            pitch_fifth += -1
+
         chord.append({'track': track, 'channel': channel, 'pitch': pitch_third,
                       'duration': duration, 'time': harmony_timeline})
 
-        chord.append({'track': track, 'channel': channel, 'pitch': pitch + self.intervals_dic['5J'],
+        chord.append({'track': track, 'channel': channel, 'pitch': pitch_fifth,
                       'duration': duration, 'time': harmony_timeline})
         harmony_timeline = harmony_timeline + duration
-        print(chord)
+
         self.inversion(chord)
 
         return harmony_timeline
@@ -643,15 +644,23 @@ class Song:
         chords = []
 
         for chord in self.genotype['harmony']:
+
             mode = ''
+
             if len(chord) == 0:
                 chords.append('-')
             else:
-                if abs(chord[0]['pitch']-chord[1]['pitch']) % 2 > 0:
-                    mode = 'm'
+                if abs(chord[0]['pitch'] - chord[2]['pitch']) % 2 == 0:
+                    mode = '°'
+                else:
+                    if abs(chord[0]['pitch'] - chord[1]['pitch']) % 2 > 0:
+                        mode = 'm'
 
                 chord = self.pitch_labels[chord[0]['pitch']] + mode
                 chords.append(chord)
+        print(self.key)
+        print(self.scale_mode)
+        print(chords)
 
         for i in range(0, len(chords), num_bars_karaoke-1):
 

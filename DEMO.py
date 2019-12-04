@@ -23,11 +23,11 @@ if args.type == 'all':
 
 for s in demos_styles:
     song = Song()
-    song.num_bars = 12
-    song.initialize_song()
+    song.choices()
+    song.preset = s
+    song.compose()
     song.build_midi()
     song.build_karaoke()
-    song.preset = s
     song.export_midi('current_song_all')
 
     went_live = False
