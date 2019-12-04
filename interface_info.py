@@ -91,7 +91,7 @@ class AppInfo(QWidget):
         button_exit = QPushButton('', self)
         button_exit.setStyleSheet("background-color: rgb(40,40,40);");
         button_exit.move(1555, 5)
-        button_exit.resize(5, 5)
+        button_exit.resize(10, 10)
         button_exit.clicked.connect(self.quit_aj)
 
         num_chords = 10

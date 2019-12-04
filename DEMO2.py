@@ -4,7 +4,7 @@ from golive import *
 # example 1
 song = Song()
 song.choices()
-song.preset = 18
+song.preset = 11
 song.key = 36
 song.tempo = 120
 song.scale_mode = 'minor'
@@ -14,6 +14,7 @@ song.num_bars = 36
 song.progression_type = 'blues'
 song.compose()
 song.build_midi()
+song.build_karaoke()
 song.export_midi('current_song_all')
 went_live = False
 while not went_live:

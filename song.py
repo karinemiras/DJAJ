@@ -33,6 +33,7 @@ class Song:
         self.progression = []
         self.progression_type = None
         self.preset = None
+        self.silent_bars = None
         self.karaoke_chords = []
 
         self.duration_pool = {
@@ -75,7 +76,6 @@ class Song:
         self.pitch_pool = range(self.low_ref1, self.low_ref1+12, 1)
         self.num_octaves = 5
         self.drummed_prob = 1
-        self.silent_bars = 0.5
         # Labels for all pitches of the keyboard, regardless key
         self.pitch_labels = {}
 
@@ -141,6 +141,7 @@ class Song:
                                  self.tempo_pool['min']),
                              self.tempo_pool['max']))
         self.key = random.choice(self.pitch_pool)
+        self.silent_bars = random.uniform(0.1, 0.5)
         self.scale_mode = random.choice(self.scale_modes)
         self.scale_type = random.choice(self.scale_types)
         self.times = random.choice(self.times_pool)

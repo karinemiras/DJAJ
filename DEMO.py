@@ -19,7 +19,7 @@ if args.type == 'all':
     demos_styles = Song('').presets
 
 # just choose some
-d# emos_styles = [11, 15]
+#demos_styles = [11]
 
 for s in demos_styles:
     song = Song()
