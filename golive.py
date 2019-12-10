@@ -5,6 +5,8 @@ import time
 
 def go_live_ableton(song, short=False):
 
+    managed_to_open = False
+
     try:
 
         ap, app = show_song_info(0,
@@ -19,7 +21,8 @@ def go_live_ableton(song, short=False):
                   + str(song.preset)
                   + ' osascript as_open.scpt')
 
-        time.sleep(1)
+        time.sleep(0.5)
+        managed_to_open = True
 
         set = live.Set()
         set.scan(scan_devices=True)
@@ -31,7 +34,7 @@ def go_live_ableton(song, short=False):
         for t in set.tracks:
             t.clips[0].play()
 
-        # wait for song to finish playing: complete or 2 seconds only
+        # wait for song to finish playing: complete or 5 seconds only
         if not short:
             bar_karaoke = 0
             chords_sequence = 0
@@ -48,19 +51,25 @@ def go_live_ableton(song, short=False):
                     chords_sequence += 1
                     bar_karaoke = 0
         else:
-            time.sleep(2)
+            time.sleep(5)
 
-        # stop all tracks
         os.system('osascript as_focus.scpt')
         for t in set.tracks:
             t.clips[0].stop()
 
-        # saves project and closes ableton
+        os.system('osascript as_focus.scpt')
+        os.system('osascript as_stop.scpt')
+        os.system('osascript as_save.scpt')
         os.system('osascript as_close.scpt')
+
         time.sleep(0.5)
 
         return True
 
     except:
+
+        if managed_to_open:
+            os.system('osascript as_save.scpt')
+            os.system('osascript as_close.scpt')
         return False
 
