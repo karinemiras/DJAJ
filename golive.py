@@ -3,7 +3,6 @@ import live
 import os
 import time
 
-
 def go_live_ableton(song, short=False):
 
     try:
@@ -20,7 +19,7 @@ def go_live_ableton(song, short=False):
                   + str(song.preset)
                   + ' osascript as_open.scpt')
 
-        time.sleep(1.5)
+        time.sleep(1)
 
         set = live.Set()
         set.scan(scan_devices=True)

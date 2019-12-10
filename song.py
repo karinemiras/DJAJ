@@ -334,7 +334,7 @@ class Song:
 
         self.genotype['percussion'] = percussion
 
-    def solo_scale_keyboard_filtered(self):
+    def solo_scale_keyboard(self):
 
         keyboard = list(filter(lambda x: x >= self.low_ref2
                                      and x <= self.low_ref2 + self.melody_reach,
@@ -344,7 +344,7 @@ class Song:
     def compose_solo(self, track, channel):
 
         solo = []
-        local_scale_keyboard_filtered = self.solo_scale_keyboard_filtered()
+        local_scale_keyboard_filtered = self.solo_scale_keyboard()
         idx_previous_pitch = None
         solo_timeline = 0
 
@@ -658,9 +658,6 @@ class Song:
 
                 chord = self.pitch_labels[chord[0]['pitch']] + mode
                 chords.append(chord)
-        print(self.key)
-        print(self.scale_mode)
-        print(chords)
 
         for i in range(0, len(chords), num_bars_karaoke-1):
 
