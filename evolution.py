@@ -30,7 +30,8 @@ class Evolution:
                  _presets=range(1, 51 + 1, 1),
                  _go_live=True,
                  _infinite_generations=False,
-                 _user_evaluation=False):
+                 _user_evaluation=False,
+                 _progression_type=None):
 
         self.experiment_name = experiment_name
 
@@ -47,6 +48,7 @@ class Evolution:
         self.go_live = _go_live
         self.infinite_generations = _infinite_generations
         self.user_evaluation = _user_evaluation
+        self.progression_type = _progression_type
 
         self.population = None
         self.offspring = None
@@ -106,6 +108,7 @@ class Evolution:
         song = Song()
         song.num_bars = self.num_bars
         song.presets = self.presets
+        song.progression_type = self.progression_type
         return song
 
     def new_offspring(self, individual):

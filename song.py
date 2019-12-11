@@ -148,7 +148,8 @@ class Song:
         self.scale_type = random.choice(self.scale_types)
         self.times = random.choice(self.times_pool)
         self.preset = random.choice(self.presets)
-        self.progression_type = random.choice(self.progression_types)
+        if self.progression_type is None:
+            self.progression_type = random.choice(self.progression_types)
         self.drummed = True if random.uniform(0, 1) <= self.drummed_prob else False
 
     def compose(self):
