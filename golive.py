@@ -5,8 +5,6 @@ import time
 
 def go_live_ableton(song, short=False):
 
-    managed_to_open = False
-
     try:
 
         ap, app = show_song_info(0,
@@ -22,7 +20,6 @@ def go_live_ableton(song, short=False):
                   + ' osascript as_open.scpt')
 
         time.sleep(0.5)
-        managed_to_open = True
 
         set = live.Set()
         set.scan(scan_devices=True)
@@ -33,7 +30,7 @@ def go_live_ableton(song, short=False):
         # play all tracks
         for t in set.tracks:
             t.clips[0].play()
-        print('played')
+
         # wait for song to finish playing: complete or 5 seconds only
         if not short:
             bar_karaoke = 0
@@ -57,10 +54,7 @@ def go_live_ableton(song, short=False):
         for t in set.tracks:
             t.clips[0].stop()
 
-        os.system('osascript as_focus.scpt')
-        os.system('osascript as_stop.scpt')
-        os.system('osascript as_save.scpt')
-        os.system('osascript as_close.scpt')
+        os.system('osascript as_close1.scpt')
 
         time.sleep(0.5)
 
@@ -68,8 +62,6 @@ def go_live_ableton(song, short=False):
 
     except:
 
-        if managed_to_open:
-            os.system('osascript as_save.scpt')
-            os.system('osascript as_close.scpt')
+        os.system('osascript as_close2.scpt')
         return False
 
