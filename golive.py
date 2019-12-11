@@ -28,12 +28,12 @@ def go_live_ableton(song, short=False):
         set.scan(scan_devices=True)
         set.tempo = song.tempo
 
-        ap, app = update_loading_label(ap, app)
+        #ap, app = update_loading_label(ap, app)
 
         # play all tracks
         for t in set.tracks:
             t.clips[0].play()
-
+        print('played')
         # wait for song to finish playing: complete or 5 seconds only
         if not short:
             bar_karaoke = 0

@@ -10,7 +10,7 @@ _cataclysmic_mutations_freqs = 3
 _cataclysmic_mutations_size = 5
 _max_score = 5
 _timeout = 60
-_num_bars = 12#24
+_num_bars = 24
 # only rpop/rock instruments
 _presets = [2, 11, 12, 13, 18, 29, 42, 46, 50]
 _go_live = True

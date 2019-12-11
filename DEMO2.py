@@ -5,9 +5,9 @@ from golive import *
 # example 1
 song = Song()
 song.choices()
-song.preset = 43
+song.preset = 12
 song.key = 36
-song.tempo = 120
+song.tempo = 135
 song.scale_mode = 'major'
 song.scale_type = 'pentatonic'
 song.times = 4
