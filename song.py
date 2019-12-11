@@ -143,11 +143,12 @@ class Song:
                                  self.tempo_pool['min']),
                              self.tempo_pool['max']))
         self.key = random.choice(self.pitch_pool)
-        self.silent_bars = random.uniform(0.1, 0.3)
+        self.silent_bars = random.uniform(0.2, 0.5)
         self.scale_mode = random.choice(self.scale_modes)
         self.scale_type = random.choice(self.scale_types)
-        self.times = random.choice(self.times_pool)
         self.preset = random.choice(self.presets)
+        if self.times is None:
+            self.times = random.choice(self.times_pool)
         if self.progression_type is None:
             self.progression_type = random.choice(self.progression_types)
         self.drummed = True if random.uniform(0, 1) <= self.drummed_prob else False

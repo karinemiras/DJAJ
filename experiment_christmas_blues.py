@@ -17,6 +17,7 @@ _go_live = True
 _infinite_generations = True
 _user_evaluation = True
 _progression_type = 'blues'
+_times = 4
 
 experiment = Evolution(
                          experiment_name,
@@ -33,7 +34,8 @@ experiment = Evolution(
                          _go_live,
                          _infinite_generations,
                          _user_evaluation,
-                         _progression_type
+                         _progression_type,
+                         _times
         )
 
 experiment.evolve()
