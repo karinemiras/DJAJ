@@ -12,7 +12,7 @@ experiment = Evolution(
                         _cataclysmic_mutations_size=0,
                         _max_score=5,
                         _timeout=60,
-                        _num_bars=24,
+                        _num_bars=36,
                         _presets=[  16, 17, 25, 26, 28,
                                     30, 31, 32, 33, 34, 35, 36,
                                     37, 38, 41, 43, 44, 45, 47,
