@@ -17,7 +17,8 @@ import shutil
 
 class Evolution:
 
-    def __init__(self, experiment_name,
+    def __init__(self,
+                 experiment_name,
                  _num_objectives=2,
                  _mutation_size=0.3,
                  _population_size=10,
@@ -28,11 +29,14 @@ class Evolution:
                  _timeout=10,
                  _num_bars=12,
                  _presets=range(1, 51 + 1, 1),
+                 _tempo_pool={'min': 90, 'mean': 130, 'std': 20, 'max': 180},
+                 _silent_bars_range=[0.2, 0.5],
                  _go_live=True,
                  _infinite_generations=False,
                  _user_evaluation=False,
                  _progression_type=None,
-                 _times=None):
+                 _times=None
+                 ):
 
         self.experiment_name = experiment_name
 
@@ -51,6 +55,8 @@ class Evolution:
         self.user_evaluation = _user_evaluation
         self.progression_type = _progression_type
         self.times = _times
+        self.tempo_pool = _tempo_pool
+        self.silent_bars_range = _silent_bars_range
 
         self.population = None
         self.offspring = None
@@ -110,8 +116,10 @@ class Evolution:
         song = Song()
         song.num_bars = self.num_bars
         song.presets = self.presets
+        song.tempo_pool = self.tempo_pool
         song.progression_type = self.progression_type
         song.times = self.times
+        song.silent_bars_range = self.silent_bars_range
         return song
 
     def new_offspring(self, individual):

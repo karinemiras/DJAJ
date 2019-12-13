@@ -9,10 +9,15 @@ import math
 import numpy as np
 import random
 import pprint
+import sys
 
 class Song:
 
-    def __init__(self, _song_id='', _num_bars=12, _presets=range(1, 51+1, 1)):
+    def __init__(self, _song_id='',
+                 _num_bars=12,
+                 _presets=range(1, 51+1, 1),
+                 _tempo_pool={'min': 90, 'mean': 130, 'std': 20, 'max': 180},
+                 _silent_bars_range=[0.2, 0.5]):
 
         # Identification of the track/individual
         self.song_id = _song_id
@@ -111,7 +116,9 @@ class Song:
         self.presets = _presets
 
         #  Minimum and maximum speed in BPM.
-        self.tempo_pool = {'min': 90, 'mean': 130, 'std': 20, 'max': 180}
+        self.tempo_pool = _tempo_pool
+
+        self.silent_bars_range = _silent_bars_range
 
         # export 'all' tracks together or 'track' by track
         self.tracks_granularity = 'all'
@@ -143,7 +150,7 @@ class Song:
                                  self.tempo_pool['min']),
                              self.tempo_pool['max']))
         self.key = random.choice(self.pitch_pool)
-        self.silent_bars = random.uniform(0.2, 0.5)
+        self.silent_bars = random.uniform(self.silent_bars_range[0], self.silent_bars_range[1])
         self.scale_mode = random.choice(self.scale_modes)
         self.scale_type = random.choice(self.scale_types)
         self.preset = random.choice(self.presets)
