@@ -13,7 +13,7 @@ class AppScore(QWidget):
         self.title = 'Click on the faces to evaluate the previous jam'
         self.score = 0
         self.left = 240
-        self.top = 300
+        self.top = 600
         self.width = 1200
         self.height = 350
         return self.initUI()

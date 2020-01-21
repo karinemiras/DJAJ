@@ -17,7 +17,8 @@ class Song:
                  _num_bars=12,
                  _presets=range(1, 51+1, 1),
                  _tempo_pool={'min': 90, 'mean': 130, 'std': 20, 'max': 180},
-                 _silent_bars_range=[0.2, 0.5]):
+                 _silent_bars_range=[0.1, 0.2],
+                 _user_solo=False):
 
         # Identification of the track/individual
         self.song_id = _song_id
@@ -41,6 +42,8 @@ class Song:
         self.preset = None
         self.silent_bars = None
         self.karaoke_chords = []
+        self.roles = []
+        self.user_solo = _user_solo
 
         self.duration_pool = {
                             'semibreve': 1*4,
@@ -357,23 +360,42 @@ class Song:
         idx_previous_pitch = None
         solo_timeline = 0
 
+        if self.user_solo:
+            roles_order = ['aj']*8+['user']*4
+        else:
+            roles_order = ['aj'] * 12
+
+        for bar in range(0, int((self.num_bars+1)/12)):
+            self.roles = self.roles + roles_order
+            roles_order.reverse()
+
         for bar in range(0, self.num_bars):
             melody_bar = []
 
-            # there is a chance of having empty bars
-            if random.uniform(0, 1) <= self.silent_bars:
+            if self.roles[bar] == 'aj':
+                # there is a chance of having empty bars
+                if random.uniform(0, 1) <= self.silent_bars:
+                    solo_timeline += self.times * self.beat
+                    idx_previous_pitch = None
+                else:
+                    solo_timeline = self.get_melody_bar(melody_bar,
+                                                        local_scale_keyboard_filtered,
+                                                        track,
+                                                        channel,
+                                                        solo_timeline,
+                                                        idx_previous_pitch)
+            else:
                 solo_timeline += self.times * self.beat
                 idx_previous_pitch = None
-            else:
-                solo_timeline = self.get_melody_bar(melody_bar,
-                                                    local_scale_keyboard_filtered,
-                                                    track,
-                                                    channel,
-                                                    solo_timeline,
-                                                    idx_previous_pitch)
+
             solo.append(melody_bar)
 
+        # this hack adds a tiny note at the end, to avoid prunning of the track when having empty bars in the end
+        solo[-1].append({'track': track, 'channel': channel, 'pitch': 1,
+                          'duration': 0.01, 'time': solo_timeline})
+
         self.genotype['solo'] = solo
+
 
     def get_melody_bar(self, melody_bar, local_scale_keyboard_filtered, track, channel, melody_timeline, idx_previous_pitch):
 

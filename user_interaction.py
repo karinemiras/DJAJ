@@ -72,9 +72,18 @@ def update_loading_label(ap, app):
     return ap, app
 
 
-def update_chords_label(ap, app, bar, bars, chords, bar_karaoke):
+def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, role):
+    print(role)
+    roles_labels = {'aj': "AJ's soloing...",
+                    'user': 'You solo now!'}
 
-    ap.loading.setText('Playing '+str(bar)+'/'+str(bars))
+    roles_colors = {'aj':   '#aa0000',
+                    'user': '#00aa00'}
+
+    ap.roles.setText(roles_labels[role])
+    ap.roles.setStyleSheet("QLabel {color: "+roles_colors[role]+"}")
+
+    ap.loading.setText('bar '+str(bar)+'/'+str(bars))
 
     for c in range(0, len(ap.chords)):
         ap.chords[c].setText(chords[c]+' ')

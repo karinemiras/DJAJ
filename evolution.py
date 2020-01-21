@@ -30,12 +30,13 @@ class Evolution:
                  _num_bars=12,
                  _presets=range(1, 51 + 1, 1),
                  _tempo_pool={'min': 90, 'mean': 130, 'std': 20, 'max': 180},
-                 _silent_bars_range=[0.2, 0.5],
+                 _silent_bars_range=[0.1, 0.2],
                  _go_live=True,
                  _infinite_generations=False,
                  _user_evaluation=False,
                  _progression_type=None,
-                 _times=None
+                 _times=None,
+                 _user_solo=False
                  ):
 
         self.experiment_name = experiment_name
@@ -55,6 +56,7 @@ class Evolution:
         self.user_evaluation = _user_evaluation
         self.progression_type = _progression_type
         self.times = _times
+        self.user_solo = _user_solo
         self.tempo_pool = _tempo_pool
         self.silent_bars_range = _silent_bars_range
 
@@ -120,6 +122,7 @@ class Evolution:
         song.progression_type = self.progression_type
         song.times = self.times
         song.silent_bars_range = self.silent_bars_range
+        song.user_solo = self.user_solo
         return song
 
     def new_offspring(self, individual):

@@ -83,10 +83,16 @@ class AppInfo(QWidget):
         labelF.move(1245, 20)
 
         self.loading = QtWidgets.QLabel(self)
-        self.loading.setText('...Wait...          ')
+        self.loading.setText('...Wait...   ')
         self.loading.setFont(QtGui.QFont("Arial", 50, QtGui.QFont.Bold))
         self.loading.setStyleSheet("QLabel {color: #aa0000}")
-        self.loading.move(635, 120)
+        self.loading.move(435, 120)
+
+        self.roles = QtWidgets.QLabel(self)
+        self.roles.setText('                           ')
+        self.roles.setFont(QtGui.QFont("Arial", 50, QtGui.QFont.Bold))
+        self.roles.setStyleSheet("QLabel {color: #aa0000}")
+        self.roles.move(735, 120)
 
         button_exit = QPushButton('', self)
         button_exit.setStyleSheet("background-color: rgb(40,40,40);");
