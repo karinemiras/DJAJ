@@ -109,10 +109,16 @@ class AppInfo(QWidget):
         self.bars.setStyleSheet("QLabel {color: #FF9933}")
         self.bars.move(1370, 30)
 
-        self.loading = QMovie("img/loading.gif")
-        self.loading.frameChanged.connect(self.repaint)
-        self.loading.setScaledSize(QtCore.QSize(70, 70))
-        self.loading.start()
+        # self.loading = QMovie("img/loading.gif")
+        # self.loading.frameChanged.connect(self.repaint)
+        # self.loading.setScaledSize(QtCore.QSize(70, 70))
+        # self.loading.start()
+
+        self.wait = QtWidgets.QLabel(self)
+        self.wait.setText('...wait...')
+        self.wait.setFont(QtGui.QFont("Arial", 50, QtGui.QFont.Bold))
+        self.wait.setStyleSheet("QLabel {color: #ffffff}")
+        self.wait.move(700, 340)
 
         aj_role = QtWidgets.QLabel(self)
         aj_role.setText("Bars for AJ's solo: in red")
@@ -159,12 +165,12 @@ class AppInfo(QWidget):
 
         ref_x = 750
         ref_y = 340
-        currentFrame = self.loading.currentPixmap()
-        frameRect = currentFrame.rect()
-        frameRect.moveCenter(self.rect().center())
-        if frameRect.intersects(event.rect()):
-            painter = QPainter(self)
-            painter.drawPixmap(ref_x, ref_y, currentFrame)
+        # currentFrame = self.loading.currentPixmap()
+        # frameRect = currentFrame.rect()
+        # frameRect.moveCenter(self.rect().center())
+        # if frameRect.intersects(event.rect()):
+        #     painter = QPainter(self)
+        #     painter.drawPixmap(ref_x, ref_y, currentFrame)
 
     @pyqtSlot()
     def quit_aj(self):

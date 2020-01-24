@@ -13,7 +13,8 @@ def go_live_ableton(song, short=False):
                                  song.tempo,
                                  song.key,
                                  song.pitch_labels,
-                                 song.scale_mode)
+                                 song.scale_mode,
+                                 song.roles)
 
         os.system('all_params='
                   + str(song.preset)
@@ -25,9 +26,7 @@ def go_live_ableton(song, short=False):
         set.scan(scan_devices=True)
         set.tempo = song.tempo
 
-        #ap, app = update_loading_label(ap, app)
-
-        # play all tracks
+       # play all tracks
         for t in set.tracks:
             t.clips[0].play()
 
