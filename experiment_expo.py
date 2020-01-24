@@ -1,7 +1,5 @@
 from evolution import *
 
-
-
 experiment = Evolution(
                         experiment_name='exposition',
                         _num_objectives=2,
@@ -11,12 +9,13 @@ experiment = Evolution(
                         _cataclysmic_mutations_freqs=3,
                         _cataclysmic_mutations_size=5,
                         _max_score=5,
-                        _timeout=30,
+                        _timeout=15,
                         _num_bars=24,
                         _presets=range(1, 51 + 1, 1),
                         _go_live=True,
                         _infinite_generations=True,
-                        _user_evaluation=True
+                        _user_evaluation=True,
+                        _user_solo=True
         )
 
 experiment.evolve()

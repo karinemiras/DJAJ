@@ -45,7 +45,8 @@ def show_song_info(timeout,
                    tempo,
                    key,
                    pitch_labels,
-                   scale_mode
+                   scale_mode,
+                   roles
                    ):
 
     app = QApplication(sys.argv)
@@ -63,35 +64,22 @@ def show_song_info(timeout,
 
     return ap, app
 
+def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, roles):
 
-def update_loading_label(ap, app):
-    ap.loading.setText('Get ready!')
-    start_timer(timer_func, 0)
-    app.exec()
-
-    return ap, app
-
-
-def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, role):
-    print(role)
-    roles_labels = {'aj': "AJ's soloing...",
-                    'user': 'You solo now!'}
-
-    roles_colors = {'aj':   '#aa0000',
-                    'user': '#00aa00'}
-
-    ap.roles.setText(roles_labels[role])
-    ap.roles.setStyleSheet("QLabel {color: "+roles_colors[role]+"}")
-
-    ap.loading.setText('bar '+str(bar)+'/'+str(bars))
+    ap.bars.setText(str(bar)+'/'+str(bars))
 
     for c in range(0, len(ap.chords)):
         ap.chords[c].setText(chords[c]+' ')
 
+        if roles[c] == 'aj':
+             ap.chords[c].setStyleSheet("QLabel {color: #aa0000}")
+        if roles[c] == 'user':
+            ap.chords[c].setStyleSheet("QLabel {color: #00aa00}")
+
         if c == bar_karaoke:
             ap.chords[c].setStyleSheet("QLabel {color: #ffffff}")
-        else:
-            ap.chords[c].setStyleSheet("QLabel {color: #ff0000}")
+
+    ap.loading.setScaledSize(QtCore.QSize(1, 1))
 
     start_timer(timer_func, 0)
     app.exec()

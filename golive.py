@@ -41,7 +41,7 @@ def go_live_ableton(song, short=False):
                                                               song.num_bars,
                                                               song.karaoke_chords[chords_sequence],
                                                               bar_karaoke,
-                                                              song.roles[bar-1])
+                                                              song.roles[chords_sequence])
                 time.sleep((song.get_song_duration() / song.num_bars)-delay_of_timer)
                 bar_karaoke += 1
                 if bar_karaoke == 9:
