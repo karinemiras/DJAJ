@@ -41,7 +41,8 @@ class Song:
         self.progression_type = None
         self.preset = None
         self.silent_bars = None
-        self.karaoke_chords = []
+        self.karaoke_chords = None
+        self.karaoke_roles = None
         self.roles = []
         self.user_solo = _user_solo
 
@@ -669,12 +670,12 @@ class Song:
 
     def build_karaoke(self):
 
+        self.karaoke_chords = []
+        self.karaoke_roles = []
         num_bars_karaoke = 10
         ini_indx = 0
         fin_indx = num_bars_karaoke
         chords = []
-        roles = self.roles
-        self.roles = []
 
         for chord in self.genotype['harmony']:
 
@@ -695,13 +696,13 @@ class Song:
         for i in range(0, len(chords), num_bars_karaoke-1):
 
             chords_sequence = chords[ini_indx:fin_indx]
-            roles_sequence = roles[ini_indx:fin_indx]
+            roles_sequence = self.roles[ini_indx:fin_indx]
             if len(chords_sequence) < num_bars_karaoke:
                 chords_sequence.extend([''] * (num_bars_karaoke-len(chords_sequence)))
                 roles_sequence.extend([''] * (num_bars_karaoke - len(roles_sequence)))
 
             self.karaoke_chords.append(chords_sequence)
-            self.roles.append(roles_sequence)
+            self.karaoke_roles.append(roles_sequence)
 
             ini_indx = fin_indx - 1
             if len(chords) - fin_indx < num_bars_karaoke - 1:

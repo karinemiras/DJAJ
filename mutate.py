@@ -34,11 +34,15 @@ def mutate_tempo(song):
 
     # perturbs with a least 20 bpm, otherwise it is hard to notice
     perturb = np.random.normal(0, 20, 1)[0]
-    perturb = max(perturb, 20)
+
+    if perturb > 20:
+        perturb = 20
+    if perturb < -20:
+        perturb = -20
+
     song.tempo = int(min(max(song.tempo + perturb,
                              song.tempo_pool['min']),
                          song.tempo_pool['max']))
-
 
 def mutate_preset(song):
     song.preset = random.choice(song.presets)
@@ -47,11 +51,14 @@ def mutate_preset(song):
 def new_melody_bar(song, track):
 
     if track == 'solo':
+        ajs_bars = [i for i in range(0, len(song.roles)) if song.roles[i] == 'aj']
+        bar = random.choice(ajs_bars)
         local_scale_keyboard = song.solo_scale_keyboard()
+
     if track == 'percussion':
+        bar = random.choice(range(0, song.num_bars))
         local_scale_keyboard = song.percussion_scale_keyboard()
 
-    bar = random.choice(range(0, song.num_bars))
     melody_timeline = bar * song.times * song.beat
 
     if bar > 0 and len(song.genotype[track][bar-1]) > 0:

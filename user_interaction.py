@@ -45,28 +45,24 @@ def show_song_info(timeout,
                    tempo,
                    key,
                    pitch_labels,
-                   scale_mode,
-                   roles
+                   scale_mode
                    ):
 
     app = QApplication(sys.argv)
-
     ap = AppInfo(timeout,
                  times,
                  beat,
                  tempo,
                  key,
                  pitch_labels,
-                 scale_mode,
-                 roles)
-
+                 scale_mode)
     # weird that this works: the timer is being used to proceed to the song playing,
     # and window is closed after it plays. maybe coz this method is called from a trycatch?
     start_timer(timer_func, timeout)
-
     app.exec_()
 
     return ap, app
+
 
 def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, roles):
 
@@ -91,5 +87,3 @@ def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, roles):
     delay_of_timer = 1
 
     return ap, app, delay_of_timer
-
-

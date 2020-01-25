@@ -14,8 +14,7 @@ class AppInfo(QWidget):
                  _tempo,
                  _key,
                  _pitch_labels,
-                 _scale_mode,
-                 _roles):
+                 _scale_mode):
 
         super().__init__()
         super().setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
@@ -32,7 +31,6 @@ class AppInfo(QWidget):
         self.key = _key
         self.pitch_labels = _pitch_labels
         self.scale_mode = _scale_mode
-        self.roles = _roles
         self.loading = ''
         self.chords = []
 
@@ -48,6 +46,11 @@ class AppInfo(QWidget):
         p = self.palette()
         p.setColor(self.backgroundRole(), Qt.black)
         self.setPalette(p)
+
+        # self.loading = QMovie("img/loading.gif")
+        # self.loading.frameChanged.connect(self.repaint)
+        # self.loading.setScaledSize(QtCore.QSize(70, 70))
+        # self.loading.start()
 
         arrow1_1 = QLabel(self)
         pixmap = QPixmap('img/key.png')
@@ -74,7 +77,7 @@ class AppInfo(QWidget):
         labelC.move(655, 129)
 
         labelD = QtWidgets.QLabel(self)
-        labelD.setText(str(self.times)+'x4')
+        labelD.setText(str(self.times) + 'x4')
         labelD.setFont(QtGui.QFont("Arial", 80, QtGui.QFont.Bold))
         labelD.setStyleSheet("QLabel {color: #FF9933}")
         labelD.move(610, 30)
@@ -92,7 +95,7 @@ class AppInfo(QWidget):
         labelE.move(880, 129)
 
         labelF = QtWidgets.QLabel(self)
-        labelF.setText(str(self.tempo)+'bpm')
+        labelF.setText(str(self.tempo) + 'bpm')
         labelF.setFont(QtGui.QFont("Arial", 80, QtGui.QFont.Bold))
         labelF.setStyleSheet("QLabel {color: #FF9933}")
         labelF.move(990, 30)
@@ -154,25 +157,24 @@ class AppInfo(QWidget):
 
         for c in range(0, num_chords):
             self.chords.append(QtWidgets.QLabel(self))
-            self.chords[-1].setText('------ ')
+            self.chords[-1].setText('        ')
             self.chords[-1].setFont(QtGui.QFont("Arial", 50, QtGui.QFont.Bold))
             self.chords[-1].move(ini_x, ini_y)
             ini_x += 130
 
         self.show()
 
-    def paintEvent(self, event):
-
-        ref_x = 750
-        ref_y = 340
-        # currentFrame = self.loading.currentPixmap()
-        # frameRect = currentFrame.rect()
-        # frameRect.moveCenter(self.rect().center())
-        # if frameRect.intersects(event.rect()):
-        #     painter = QPainter(self)
-        #     painter.drawPixmap(ref_x, ref_y, currentFrame)
+    # def paintEvent(self, event):
+    #
+    #     ref_x = 750
+    #     ref_y = 340
+    #     currentFrame = self.loading.currentPixmap()
+    #     frameRect = currentFrame.rect()
+    #     frameRect.moveCenter(self.rect().center())
+    #     if frameRect.intersects(event.rect()):
+    #         painter = QPainter(self)
+    #         painter.drawPixmap(ref_x, ref_y, currentFrame)
 
     @pyqtSlot()
     def quit_aj(self):
         sys.exit()
-
