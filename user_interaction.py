@@ -18,7 +18,7 @@ def start_timer(slot, timeout=1, interval=1000):
 
 
 def timer_func(count, timeout):
-    print(timeout-count, ' seconds left...')
+    #print(timeout-count, ' seconds left...')
     if count >= timeout:
         QtCore.QCoreApplication.quit()
 
@@ -73,11 +73,19 @@ def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, roles):
 
         if roles[c] == 'aj':
              ap.chords[c].setStyleSheet("QLabel {color: #aa0000}")
+
         if roles[c] == 'user':
             ap.chords[c].setStyleSheet("QLabel {color: #00aa00}")
 
         if c == bar_karaoke:
             ap.chords[c].setStyleSheet("QLabel {color: #ffffff}")
+
+            if roles[c] == 'aj':
+                ap.roles_aj.setStyleSheet("border: 3px solid #aa0000; ")
+                ap.roles_user.setStyleSheet("border: 3px solid black;")
+            if roles[c] == 'user':
+                ap.roles_user.setStyleSheet("border: 3px solid #00aa00;")
+                ap.roles_aj.setStyleSheet("border:  3px solid black;")
 
     #ap.loading.setScaledSize(QtCore.QSize(1, 1))
     ap.wait.setText('')

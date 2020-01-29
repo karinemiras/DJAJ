@@ -146,7 +146,7 @@ class AppInfo(QWidget):
         self.roles_user.move(940, 330)
 
         button_exit = QPushButton('', self)
-        button_exit.setStyleSheet("background-color: rgb(40,40,40);");
+        button_exit.setStyleSheet("background-color: rgb(40,40,40);")
         button_exit.move(1645, 5)
         button_exit.resize(10, 10)
         button_exit.clicked.connect(self.quit_aj)
