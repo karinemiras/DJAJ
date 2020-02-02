@@ -13,6 +13,7 @@ class AppInfo(QWidget):
                  _beat,
                  _tempo,
                  _key,
+                 _karaoke_bars,
                  _pitch_labels,
                  _scale_mode):
 
@@ -29,6 +30,7 @@ class AppInfo(QWidget):
         self.beat = _beat
         self.tempo = _tempo
         self.key = _key
+        self.karaoke_bars = _karaoke_bars
         self.pitch_labels = _pitch_labels
         self.scale_mode = _scale_mode
         self.loading = ''
@@ -54,63 +56,63 @@ class AppInfo(QWidget):
 
         arrow1_1 = QLabel(self)
         pixmap = QPixmap('img/key.png')
-        pixmap = pixmap.scaledToWidth(70)
+        pixmap = pixmap.scaledToWidth(30)
         arrow1_1.setPixmap(pixmap)
-        arrow1_1.move(70, 10)
+        arrow1_1.move(120, 460)
 
         labelA = QtWidgets.QLabel(self)
         labelA.setText('Key')
         labelA.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
         labelA.setStyleSheet("QLabel {color: #ffffff}")
-        labelA.move(90, 135)
+        labelA.move(160, 490)
 
         labelB = QtWidgets.QLabel(self)
         labelB.setText(str(self.pitch_labels[self.key]) + ' ' + self.scale_mode)
-        labelB.setFont(QtGui.QFont("Arial", 80, QtGui.QFont.Bold))
+        labelB.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
         labelB.setStyleSheet("QLabel {color: #FF9933}")
-        labelB.move(167, 30)
+        labelB.move(210, 480)
 
         labelC = QtWidgets.QLabel(self)
         labelC.setText('Time ')
         labelC.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
         labelC.setStyleSheet("QLabel {color: #ffffff}")
-        labelC.move(655, 129)
+        labelC.move(550, 490)
 
         labelD = QtWidgets.QLabel(self)
         labelD.setText(str(self.times) + 'x4')
-        labelD.setFont(QtGui.QFont("Arial", 80, QtGui.QFont.Bold))
+        labelD.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
         labelD.setStyleSheet("QLabel {color: #FF9933}")
-        labelD.move(610, 30)
+        labelD.move(610, 480)
 
         arrow1_1 = QLabel(self)
         pixmap = QPixmap('img/metro.png')
-        pixmap = pixmap.scaledToWidth(90)
+        pixmap = pixmap.scaledToWidth(30)
         arrow1_1.setPixmap(pixmap)
-        arrow1_1.move(860, 20)
+        arrow1_1.move(910, 480)
 
         labelE = QtWidgets.QLabel(self)
         labelE.setText('Tempo ')
         labelE.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
         labelE.setStyleSheet("QLabel {color: #ffffff}")
-        labelE.move(880, 129)
+        labelE.move(950, 490)
 
         labelF = QtWidgets.QLabel(self)
         labelF.setText(str(self.tempo) + 'bpm')
-        labelF.setFont(QtGui.QFont("Arial", 80, QtGui.QFont.Bold))
+        labelF.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
         labelF.setStyleSheet("QLabel {color: #FF9933}")
-        labelF.move(990, 30)
+        labelF.move(1030, 480)
 
         labelG = QtWidgets.QLabel(self)
         labelG.setText('Bar')
         labelG.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
         labelG.setStyleSheet("QLabel {color: #ffffff}")
-        labelG.move(1455, 129)
+        labelG.move(1340, 490)
 
         self.bars = QtWidgets.QLabel(self)
         self.bars.setText('----/----')
-        self.bars.setFont(QtGui.QFont("Arial", 80, QtGui.QFont.Bold))
+        self.bars.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
         self.bars.setStyleSheet("QLabel {color: #FF9933}")
-        self.bars.move(1370, 30)
+        self.bars.move(1400, 480)
 
         # self.loading = QMovie("img/loading.gif")
         # self.loading.frameChanged.connect(self.repaint)
@@ -118,32 +120,18 @@ class AppInfo(QWidget):
         # self.loading.start()
 
         self.wait = QtWidgets.QLabel(self)
-        self.wait.setText('...wait...')
-        self.wait.setFont(QtGui.QFont("Arial", 50, QtGui.QFont.Bold))
+        self.wait.setText('    ...wait...            ')
         self.wait.setStyleSheet("QLabel {color: #ffffff}")
-        self.wait.move(700, 340)
+        self.wait.setStyleSheet("QLabel {color: #ffffff}")
+        self.wait.setFont(QtGui.QFont("Arial", 100, QtGui.QFont.Bold))
+        self.wait.move(500, 200)
 
-        aj_role = QtWidgets.QLabel(self)
-        aj_role.setText("Bars for AJ's solo: in red")
-        aj_role.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
-        aj_role.setStyleSheet("QLabel {color: #aa0000}")
-        aj_role.move(430, 480)
+        self.roles = QLabel(self)
+        self.pixmap1 = QPixmap('img/aj_icon.png')
+        self.roles.setGeometry(QtCore.QRect(700, 280, 200, 200))
+        self.roles.setPixmap(self.pixmap1)
 
-        self.roles_aj = QLabel(self)
-        pixmap = QPixmap('img/aj_icon.png')
-        self.roles_aj.setPixmap(pixmap)
-        self.roles_aj.move(460, 320)
-
-        user_role = QtWidgets.QLabel(self)
-        user_role.setText('Bars for HUMAN solo: in green')
-        user_role.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
-        user_role.setStyleSheet("QLabel {color: #00aa00}")
-        user_role.move(890, 480)
-
-        self.roles_user = QLabel(self)
-        pixmap = QPixmap('img/user_icon.png')
-        self.roles_user.setPixmap(pixmap)
-        self.roles_user.move(940, 330)
+        self.pixmap2 = QPixmap('img/user_icon.png')
 
         button_exit = QPushButton('', self)
         button_exit.setStyleSheet("background-color: rgb(40,40,40);")
@@ -151,16 +139,21 @@ class AppInfo(QWidget):
         button_exit.resize(10, 10)
         button_exit.clicked.connect(self.quit_aj)
 
-        num_chords = 10
-        ini_x = 150
-        ini_y = 200
+        num_chords = self.karaoke_bars
+        ini_x = 50
+        ini_y = 20
 
         for c in range(0, num_chords):
             self.chords.append(QtWidgets.QLabel(self))
-            self.chords[-1].setText('        ')
-            self.chords[-1].setFont(QtGui.QFont("Arial", 50, QtGui.QFont.Bold))
+            self.chords[-1].setText('          ')
+            self.chords[-1].setFont(QtGui.QFont("Arial", 40, QtGui.QFont.Bold))
+            self.chords[c].setStyleSheet("QLabel {color: #aa0000; border: 2px solid #aa0000;}")
+            self.chords[-1].resize(130, 70)
             self.chords[-1].move(ini_x, ini_y)
             ini_x += 130
+            if c == 11:
+                ini_x = 50
+                ini_y = 90
 
         self.show()
 

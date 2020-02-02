@@ -82,6 +82,7 @@ class Song:
         # Second lowest pool (C2)
         self.low_ref2 = 48
         self.melody_reach = 36
+        self.karaoke_bars = 24
 
         self.pitch_pool = range(self.low_ref1, self.low_ref1+12, 1)
         self.num_octaves = 5
@@ -672,7 +673,7 @@ class Song:
 
         self.karaoke_chords = []
         self.karaoke_roles = []
-        num_bars_karaoke = 10
+        num_bars_karaoke = self.karaoke_bars
         ini_indx = 0
         fin_indx = num_bars_karaoke
         chords = []
@@ -701,10 +702,11 @@ class Song:
                 chords_sequence.extend([''] * (num_bars_karaoke-len(chords_sequence)))
                 roles_sequence.extend([''] * (num_bars_karaoke - len(roles_sequence)))
 
-            self.karaoke_chords.append(chords_sequence)
-            self.karaoke_roles.append(roles_sequence)
+            if chords_sequence.count('') == 0:
+                self.karaoke_chords.append(chords_sequence)
+                self.karaoke_roles.append(roles_sequence)
 
-            ini_indx = fin_indx - 1
+            ini_indx = fin_indx - 1#12
             if len(chords) - fin_indx < num_bars_karaoke - 1:
                 fin_indx = len(chords)
             else:

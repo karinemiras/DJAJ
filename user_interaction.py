@@ -44,6 +44,7 @@ def show_song_info(timeout,
                    beat,
                    tempo,
                    key,
+                   karaoke_bars,
                    pitch_labels,
                    scale_mode
                    ):
@@ -54,6 +55,7 @@ def show_song_info(timeout,
                  beat,
                  tempo,
                  key,
+                 karaoke_bars,
                  pitch_labels,
                  scale_mode)
     # weird that this works: the timer is being used to proceed to the song playing,
@@ -70,25 +72,34 @@ def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, roles):
 
     for c in range(0, len(ap.chords)):
         ap.chords[c].setText(chords[c]+' ')
+        ap.chords[c].setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
 
         if roles[c] == 'aj':
-             ap.chords[c].setStyleSheet("QLabel {color: #aa0000}")
+             ap.chords[c].setStyleSheet("QLabel {color: #aa0000; border: 2px solid #aa0000;}")
+             #ap.chords[c].setStyleSheet("QLabel {color: #aa0000; ;}")
 
         if roles[c] == 'user':
-            ap.chords[c].setStyleSheet("QLabel {color: #00aa00}")
+            ap.chords[c].setStyleSheet("QLabel {color: #00aa00; border: 2px solid #00aa00;}")
+            #ap.chords[c].setStyleSheet("QLabel {color: #00aa00; }")
 
         if c == bar_karaoke:
-            ap.chords[c].setStyleSheet("QLabel {color: #ffffff}")
+            ap.chords[c].setStyleSheet("QLabel {color: #ffffff; border: 2px solid #ffffff;}")
+           # ap.chords[c].setStyleSheet("QLabel {color: #ffffff; }")
+            ap.chords[c].setFont(QtGui.QFont("Arial", 40, QtGui.QFont.Bold))
 
             if roles[c] == 'aj':
-                ap.roles_aj.setStyleSheet("border: 3px solid #aa0000; ")
-                ap.roles_user.setStyleSheet("border: 3px solid black;")
+                ap.wait.setText('                       AJ is soloing...')
+                ap.wait.setStyleSheet("QLabel {color: #aa0000}")
+                ap.wait.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
+                ap.roles.setPixmap(ap.pixmap1)
+
             if roles[c] == 'user':
-                ap.roles_user.setStyleSheet("border: 3px solid #00aa00;")
-                ap.roles_aj.setStyleSheet("border:  3px solid black;")
+                ap.wait.setText(' You solo now!')
+                ap.wait.setStyleSheet("QLabel {color: #00aa00}")
+                ap.wait.setFont(QtGui.QFont("Arial", 80, QtGui.QFont.Bold))
+                ap.roles.setPixmap(ap.pixmap2)
 
     #ap.loading.setScaledSize(QtCore.QSize(1, 1))
-    ap.wait.setText('')
 
     start_timer(timer_func, 0)
     app.exec()
