@@ -694,23 +694,14 @@ class Song:
                 chord = self.pitch_labels[chord[0]['pitch']] + mode
                 chords.append(chord)
 
-        for i in range(0, len(chords), num_bars_karaoke-1):
-
+        while fin_indx <= len(chords):
             chords_sequence = chords[ini_indx:fin_indx]
             roles_sequence = self.roles[ini_indx:fin_indx]
-            if len(chords_sequence) < num_bars_karaoke:
-                chords_sequence.extend([''] * (num_bars_karaoke-len(chords_sequence)))
-                roles_sequence.extend([''] * (num_bars_karaoke - len(roles_sequence)))
-
-            if chords_sequence.count('') == 0:
+            if len(chords_sequence) == num_bars_karaoke:
                 self.karaoke_chords.append(chords_sequence)
                 self.karaoke_roles.append(roles_sequence)
-
-            ini_indx = fin_indx - 1#12
-            if len(chords) - fin_indx < num_bars_karaoke - 1:
-                fin_indx = len(chords)
-            else:
-                fin_indx = fin_indx + num_bars_karaoke - 1
+            ini_indx = fin_indx - 12
+            fin_indx = fin_indx + 12
 
     def add_notes_midi(self, track_export=None):
 

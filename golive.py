@@ -38,7 +38,6 @@ def go_live_ableton(song, short=False):
             chords_sequence = 0
 
             for bar in range(0+1, song.num_bars+1):
-
                 ap, app, delay_of_timer = update_chords_label(ap, app, bar,
                                                               song.num_bars,
                                                               song.karaoke_chords[chords_sequence],
@@ -47,7 +46,8 @@ def go_live_ableton(song, short=False):
 
                 time.sleep((song.get_song_duration() / song.num_bars)-delay_of_timer)
                 bar_karaoke += 1
-                if bar_karaoke == song.karaoke_bars:
+
+                if bar_karaoke == 12 and chords_sequence < len(song.karaoke_chords)-1:
                     chords_sequence += 1
                     bar_karaoke = 0
         else:
