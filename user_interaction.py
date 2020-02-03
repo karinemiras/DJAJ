@@ -76,15 +76,12 @@ def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, roles):
 
         if roles[c] == 'aj':
              ap.chords[c].setStyleSheet("QLabel {color: #aa0000; border: 2px solid #aa0000;}")
-             #ap.chords[c].setStyleSheet("QLabel {color: #aa0000; ;}")
 
         if roles[c] == 'user':
             ap.chords[c].setStyleSheet("QLabel {color: #00aa00; border: 2px solid #00aa00;}")
-            #ap.chords[c].setStyleSheet("QLabel {color: #00aa00; }")
 
         if c == bar_karaoke:
             ap.chords[c].setStyleSheet("QLabel {color: #ffffff; border: 2px solid #ffffff;}")
-           # ap.chords[c].setStyleSheet("QLabel {color: #ffffff; }")
             ap.chords[c].setFont(QtGui.QFont("Arial", 40, QtGui.QFont.Bold))
 
             if roles[c] == 'aj':
