@@ -1,0 +1,19 @@
+ #!/bin/bash
+
+file="current_song_all.txt"
+
+while true
+	do
+            duration=$(cat "$file" )
+            let delay=60
+            let limit=$(( delay+duration ))
+            let age=$(( $(date +%s) - $(stat -f%c current_song_all.txt) ))
+
+             if [ $age -gt $limit ]
+                then
+                osascript as_close1.scpt;
+                kill $(  ps aux | grep 'python' | awk '{print $2}');
+                printf 'resurrected %s %s\n' "$(date)" "$line";
+             fi
+	done
+done

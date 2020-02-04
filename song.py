@@ -55,7 +55,7 @@ class Song:
         }
         self.beat = self.duration_pool['seminima']
         # quaternary is more likely
-        self.times_pool = [3] + [4]*5
+        self.times_pool = [3] + [4]*6
         # Use multiples of 12
         self.num_bars = _num_bars
         # Tracks info
@@ -100,6 +100,7 @@ class Song:
         # Free has more chance of happening than fixed progressions.
         self.progression_types = ['blues', 'fall']
         self.progression_types.extend(['free'] * 4)
+        self.drumms_styles = ['rock', 'rock', 'fast_rock', 'long_dance', 'short_dance', 'puts']
 
         self.intervals_dic = {
                                     'T': 0,
@@ -154,6 +155,7 @@ class Song:
         self.tempo = int(min(max(np.random.normal(self.tempo_pool['mean'], self.tempo_pool['std'], 1)[0],
                                  self.tempo_pool['min']),
                              self.tempo_pool['max']))
+
         self.key = random.choice(self.pitch_pool)
         self.silent_bars = random.uniform(self.silent_bars_range[0], self.silent_bars_range[1])
         self.scale_mode = random.choice(self.scale_modes)
@@ -307,18 +309,82 @@ class Song:
 
                     # leave space for opening turn
                     if percussion_timeline > 0:
-                        melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
-                                      'duration': self.beat / 2, 'time': percussion_timeline})
-                        melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
-                                      'duration': self.beat / 2, 'time': percussion_timeline + self.beat})
-                        # space for ending turns
-                        if random.uniform(0, 1) <= 0.75:
-                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
-                                          'duration': self.beat / 2, 'time': percussion_timeline + self.beat * 2})
-                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
-                                          'duration': self.beat / 2, 'time': percussion_timeline + self.beat * 3})
 
-                # kick and snare for ternary
+                        drumms_styles = random.choice(self.drumms_styles)
+
+                        if drumms_styles == 'rock':
+
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                          'duration': self.beat / 2, 'time': percussion_timeline})
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
+                                          'duration': self.beat / 2, 'time': percussion_timeline + self.beat})
+                            # space for ending turns
+                            if random.uniform(0, 1) <= 0.75:
+                                melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                              'duration': self.beat / 2, 'time': percussion_timeline + self.beat * 2})
+                                melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
+                                              'duration': self.beat / 2, 'time': percussion_timeline + self.beat * 3})
+
+                        if drumms_styles == 'fast_rock':
+
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                               'duration': self.beat / 2, 'time': percussion_timeline})
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
+                                               'duration': self.beat / 2, 'time': percussion_timeline + self.beat})
+                            # space for ending turns
+                            if random.uniform(0, 1) <= 0.75:
+                                melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                                   'duration': self.beat / 2,
+                                                   'time': percussion_timeline + self.beat * 2})
+                                melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                                   'duration': self.beat / 2,
+                                                   'time': percussion_timeline + self.beat * 2.5})
+                                melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
+                                                   'duration': self.beat / 2,
+                                                   'time': percussion_timeline + self.beat * 3})
+
+                        if drumms_styles == 'long_dance':
+
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                          'duration': self.beat / 2, 'time': percussion_timeline})
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
+                                          'duration': self.beat / 2, 'time': percussion_timeline + self.beat})
+                            # space for ending turns
+                            if random.uniform(0, 1) <= 0.75:
+                                melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                              'duration': self.beat / 2, 'time': percussion_timeline + self.beat * 2.5})
+                                melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
+                                              'duration': self.beat / 2, 'time': percussion_timeline + self.beat * 3.5})
+
+                        if drumms_styles == 'short_dance':
+
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                          'duration': self.beat / 2, 'time': percussion_timeline})
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
+                                          'duration': self.beat / 2, 'time': percussion_timeline + self.beat})
+                            # space for ending turns
+                            if random.uniform(0, 1) <= 0.75:
+                                melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                              'duration': self.beat / 2, 'time': percussion_timeline + self.beat * 2.5})
+                                melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1 + 2,
+                                              'duration': self.beat / 2, 'time': percussion_timeline + self.beat * 3})
+
+                        if drumms_styles == 'puts':
+
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                               'duration': self.beat, 'time': percussion_timeline})
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                               'duration': self.beat, 'time': percussion_timeline + self.beat})
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                               'duration': self.beat, 'time': percussion_timeline+ self.beat * 2})
+                            melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                               'duration': self.beat, 'time': percussion_timeline + self.beat * 3})
+                            # space for ending turns
+                            if random.uniform(0, 1) <= 0.75:
+                                melody_bar.append({'track': track, 'channel': channel, 'pitch': self.low_ref1,
+                                                   'duration': self.beat, 'time': percussion_timeline})
+
+            # kick and snare for ternary
                 if self.times == 3:
 
                     # leave space for opening turn
@@ -640,7 +706,7 @@ class Song:
 
         total_beats = self.beat * self.times * self.num_bars
         minute_portion = total_beats / self.tempo
-        seconds = minute_portion * 60
+        seconds = math.ceil(minute_portion * 60)
         return seconds
 
     def build_midi(self, path='', song_id='', export_phenotype=False):
@@ -717,13 +783,16 @@ class Song:
                                                self.volumes[track])
 
     def export_metadata(self):
-
         pass
 
     def export_midi(self, name):
 
         with open(name+'.mid', "wb") as output_file:
             self.phenotype.writeFile(output_file)
+
+        file1 = open(name+".txt", "w")
+        file1.write(str(self.get_song_duration()))
+        file1.close()
 
     def play_midi(self):
 

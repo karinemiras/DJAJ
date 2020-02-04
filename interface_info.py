@@ -54,6 +54,12 @@ class AppInfo(QWidget):
         # self.loading.setScaledSize(QtCore.QSize(70, 70))
         # self.loading.start()
 
+        title = QtWidgets.QLabel(self)
+        title.setText('You solo in the green bars:')
+        title.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
+        title.setStyleSheet("QLabel {color: #00aa00}")
+        title.move(10, 10)
+
         arrow1_1 = QLabel(self)
         pixmap = QPixmap('img/key.png')
         pixmap = pixmap.scaledToWidth(30)
@@ -141,7 +147,7 @@ class AppInfo(QWidget):
 
         num_chords = self.karaoke_bars
         ini_x = 50
-        ini_y = 20
+        ini_y = 60
 
         for c in range(0, num_chords):
             self.chords.append(QtWidgets.QLabel(self))
@@ -153,7 +159,7 @@ class AppInfo(QWidget):
             ini_x += 130
             if c == 11:
                 ini_x = 50
-                ini_y = 90
+                ini_y = 130
 
         self.show()
 

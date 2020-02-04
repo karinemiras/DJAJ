@@ -50,6 +50,7 @@ def go_live_ableton(song, short=False):
                 if bar_karaoke == 12 and chords_sequence < len(song.karaoke_chords)-1:
                     chords_sequence += 1
                     bar_karaoke = 0
+
         else:
             time.sleep(5)
 
