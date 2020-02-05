@@ -297,6 +297,7 @@ class Song:
         local_percussion_keyboard = self.percussion_scale_keyboard()
         idx_previous_drum = None
         percussion_timeline = 0
+        drumms_styles = random.choice(self.drumms_styles)
 
         if self.drummed:
 
@@ -309,8 +310,6 @@ class Song:
 
                     # leave space for opening turn
                     if percussion_timeline > 0:
-
-                        drumms_styles = random.choice(self.drumms_styles)
 
                         if drumms_styles == 'rock':
 
