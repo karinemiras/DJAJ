@@ -50,7 +50,7 @@ class Clip(live.LoggingObject):
 
     def reset(self):
         if self.looplen != self.length:
-            self.log_info("Resetting loop length to %d" % self.length)
+            self.log_info("Resetting loop_watch length to %d" % self.length)
             self.set.set_clip_loop_end(self.track.index, self.index, self.looplen)
 
     def play(self):

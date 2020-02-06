@@ -14,11 +14,11 @@ import sys
 class Song:
 
     def __init__(self, _song_id='',
-                 _num_bars=12,
+                 _num_bars=24,
                  _presets=range(1, 51+1, 1),
                  _tempo_pool={'min': 90, 'mean': 130, 'std': 20, 'max': 180},
                  _silent_bars_range=[0.1, 0.2],
-                 _user_solo=False):
+                 _user_solo=True):
 
         # Identification of the track/individual
         self.song_id = _song_id
@@ -155,7 +155,6 @@ class Song:
         self.tempo = int(min(max(np.random.normal(self.tempo_pool['mean'], self.tempo_pool['std'], 1)[0],
                                  self.tempo_pool['min']),
                              self.tempo_pool['max']))
-
         self.key = random.choice(self.pitch_pool)
         self.silent_bars = random.uniform(self.silent_bars_range[0], self.silent_bars_range[1])
         self.scale_mode = random.choice(self.scale_modes)

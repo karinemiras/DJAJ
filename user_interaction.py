@@ -34,7 +34,7 @@ def get_user_input(max_score, timeout):
         score = ap.score
     else:
         score = random.choice(range(1, max_score + 1))
-        print("\nSorry, your time expired or your choice was invalid. A random choice was made for you.\n")
+        #print("\nSorry, your time expired or your choice was invalid. A random choice was made for you.\n")
 
     return score
 

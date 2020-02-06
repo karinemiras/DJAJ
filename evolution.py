@@ -27,7 +27,7 @@ class Evolution:
                  _cataclysmic_mutations_size=2,
                  _max_score=5,
                  _timeout=10,
-                 _num_bars=12,
+                 _num_bars=24,
                  _presets=range(1, 51 + 1, 1),
                  _tempo_pool={'min': 90, 'mean': 130, 'std': 20, 'max': 180},
                  _silent_bars_range=[0.1, 0.2],
@@ -36,7 +36,7 @@ class Evolution:
                  _user_evaluation=False,
                  _progression_type=None,
                  _times=None,
-                 _user_solo=False
+                 _user_solo=True
                  ):
 
         self.experiment_name = experiment_name
@@ -313,6 +313,9 @@ class Evolution:
 
                     for ind in range(offspring_recovered, self.population_size):
                         self.offspring[ind] = self.new_offspring(self.population[ind])
+
+                    if int(self.offspring[0].song_id) % 30 == 0:
+                        sys.exit()
 
                     self.select()
 
