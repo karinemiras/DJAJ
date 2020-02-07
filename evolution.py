@@ -183,6 +183,11 @@ class Evolution:
 
         print('-- evaluated song '+individual[0].song_id + ', quality: '+str(fitness_quality))
 
+        # at every 10 individuals, stop the system to be restarted (trying to avoid qt freezing)
+        if int(individual[0].song_id) % 10 == 0:
+            print('safe stop...')
+            sys.exit()
+
     def replicate_mutate(self, individual):
         offspring = copy.deepcopy(individual)
         mutate(offspring[0], self.mutation_size)
@@ -337,8 +342,6 @@ class Evolution:
             experiment_management.export_snapshot(self.population, generation)
             self.logs_results(generation)
 
-            sys.exit()
-
         generation += 1
 
         while generation < self.generations or self.infinite_generations:
@@ -364,9 +367,6 @@ class Evolution:
                 self.read_logbook()
                 do_recovery = False
             self.logs_results(generation, new=False)
-
-            if int(self.offspring[-1][0].song_id) % 10 == 0:
-                sys.exit()
 
             generation += 1
 
