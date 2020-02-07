@@ -314,9 +314,6 @@ class Evolution:
                     for ind in range(offspring_recovered, self.population_size):
                         self.offspring[ind] = self.new_offspring(self.population[ind])
 
-                    if int(self.offspring[0].song_id) % 30 == 0:
-                        sys.exit()
-
                     self.select()
 
                     experiment_management.export_snapshot(self.population, generation)
@@ -339,6 +336,8 @@ class Evolution:
 
             experiment_management.export_snapshot(self.population, generation)
             self.logs_results(generation)
+
+            sys.exit()
 
         generation += 1
 
@@ -365,6 +364,9 @@ class Evolution:
                 self.read_logbook()
                 do_recovery = False
             self.logs_results(generation, new=False)
+
+            if int(self.offspring[-1][0].song_id) % 10 == 0:
+                sys.exit()
 
             generation += 1
 
