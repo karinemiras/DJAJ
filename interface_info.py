@@ -117,7 +117,7 @@ class AppInfo(QWidget):
         self.bars = QtWidgets.QLabel(self)
         self.bars.setText('----/----')
         self.bars.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
-        self.bars.setStyleSheet("QLabel {color: #FF9933}")
+        self.bars.setStyleSheet("QLabel {color: #aa0000}")
         self.bars.move(1400, 480)
 
         # self.loading = QMovie("img/loading.gif")
@@ -126,9 +126,8 @@ class AppInfo(QWidget):
         # self.loading.start()
 
         self.wait = QtWidgets.QLabel(self)
-        self.wait.setText('    ...wait...            ')
-        self.wait.setStyleSheet("QLabel {color: #ffffff}")
-        self.wait.setStyleSheet("QLabel {color: #ffffff}")
+        self.wait.setText('...thinking...           ')
+        self.wait.setStyleSheet("QLabel {color: #aa0000}")
         self.wait.setFont(QtGui.QFont("Arial", 100, QtGui.QFont.Bold))
         self.wait.move(500, 200)
 
@@ -140,7 +139,7 @@ class AppInfo(QWidget):
         self.pixmap2 = QPixmap('img/user_icon.png')
 
         button_exit = QPushButton('', self)
-        button_exit.setStyleSheet("background-color: rgb(40,40,40);")
+        button_exit.setStyleSheet("background-color: rgb(30,30,30);")
         button_exit.move(1645, 5)
         button_exit.resize(10, 10)
         button_exit.clicked.connect(self.quit_aj)
@@ -153,7 +152,7 @@ class AppInfo(QWidget):
             self.chords.append(QtWidgets.QLabel(self))
             self.chords[-1].setText('          ')
             self.chords[-1].setFont(QtGui.QFont("Arial", 40, QtGui.QFont.Bold))
-            self.chords[c].setStyleSheet("QLabel {color: #aa0000; border: 2px solid #aa0000;}")
+            self.chords[c].setStyleSheet("QLabel {color: #aa0000; border: 2px solid #555555;}")
             self.chords[-1].resize(130, 70)
             self.chords[-1].move(ini_x, ini_y)
             ini_x += 130

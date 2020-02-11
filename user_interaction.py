@@ -72,28 +72,28 @@ def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, roles):
 
     for c in range(0, len(ap.chords)):
         ap.chords[c].setText(chords[c]+' ')
-        ap.chords[c].setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
+        ap.chords[c].setFont(QtGui.QFont("Arial", 30))
 
         if roles[c] == 'aj':
-             ap.chords[c].setStyleSheet("QLabel {color: #aa0000; border: 2px solid #aa0000;}")
+             ap.chords[c].setStyleSheet("QLabel {color: #777777; border: 2px solid #777777;}")
 
         if roles[c] == 'user':
             ap.chords[c].setStyleSheet("QLabel {color: #00aa00; border: 2px solid #00aa00;}")
 
         if c == bar_karaoke:
-            ap.chords[c].setStyleSheet("QLabel {color: #ffffff; border: 2px solid #ffffff;}")
-            ap.chords[c].setFont(QtGui.QFont("Arial", 40, QtGui.QFont.Bold))
+            ap.chords[c].setStyleSheet("QLabel {color: #aa0000; border: 2px solid #aa0000;}")
+            ap.chords[c].setFont(QtGui.QFont("Arial", 45, QtGui.QFont.Bold))
 
             if roles[c] == 'aj':
                 ap.wait.setText('                       AJ is soloing...')
-                ap.wait.setStyleSheet("QLabel {color: #aa0000}")
-                ap.wait.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
+                ap.wait.setStyleSheet("QLabel {color: #555555}")
+                ap.wait.setFont(QtGui.QFont("Arial", 30))
                 ap.roles.setPixmap(ap.pixmap1)
 
             if roles[c] == 'user':
                 ap.wait.setText(' You solo now!')
                 ap.wait.setStyleSheet("QLabel {color: #00aa00}")
-                ap.wait.setFont(QtGui.QFont("Arial", 80, QtGui.QFont.Bold))
+                ap.wait.setFont(QtGui.QFont("Arial", 80))
                 ap.roles.setPixmap(ap.pixmap2)
 
     #ap.loading.setScaledSize(QtCore.QSize(1, 1))
