@@ -1,9 +1,10 @@
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QPixmap
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
-from PyQt5.QtCore import pyqtSlot, QByteArray
+from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QImage, QPalette, QBrush
+from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QMovie, QPainter, QPixmap
 
 class AppInfo(QWidget):
 
@@ -19,12 +20,19 @@ class AppInfo(QWidget):
 
         super().__init__()
         super().setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+
+        oImage = QImage("img/b7.png")
+        sImage = oImage.scaled(QSize(1670, 930))  # resize Image to widgets size
+        palette = QPalette()
+        palette.setBrush(QPalette.Window, QBrush(sImage))
+        self.setPalette(palette)
+
         self.title = 'Info about the current jam'
         self.score = 0
         self.left = 5
-        self.top = 510
+        self.top = 5
         self.width = 1670
-        self.height = 530
+        self.height = 930
         self.timeout = _timeout
         self.times = _times
         self.beat = _beat
@@ -44,134 +52,95 @@ class AppInfo(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setFixedSize(self.width, self.height)
 
-        self.setAutoFillBackground(True)
-        p = self.palette()
-        p.setColor(self.backgroundRole(), Qt.black)
-        self.setPalette(p)
-
-        # self.loading = QMovie("img/loading.gif")
-        # self.loading.frameChanged.connect(self.repaint)
-        # self.loading.setScaledSize(QtCore.QSize(70, 70))
-        # self.loading.start()
-
-        title = QtWidgets.QLabel(self)
-        title.setText('You solo in the green bars:')
-        title.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
-        title.setStyleSheet("QLabel {color: #00aa00}")
-        title.move(10, 10)
-
-        arrow1_1 = QLabel(self)
-        pixmap = QPixmap('img/key.png')
-        pixmap = pixmap.scaledToWidth(30)
-        arrow1_1.setPixmap(pixmap)
-        arrow1_1.move(120, 460)
-
         labelA = QtWidgets.QLabel(self)
         labelA.setText('Key')
         labelA.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
         labelA.setStyleSheet("QLabel {color: #ffffff}")
-        labelA.move(160, 490)
+        labelA.move(160, 875)
 
         labelB = QtWidgets.QLabel(self)
         labelB.setText(str(self.pitch_labels[self.key]) + ' ' + self.scale_mode)
         labelB.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
-        labelB.setStyleSheet("QLabel {color: #FF9933}")
-        labelB.move(210, 480)
+        labelB.setStyleSheet("QLabel {color: #444444}")
+        labelB.move(210, 870)
 
         labelC = QtWidgets.QLabel(self)
         labelC.setText('Time ')
         labelC.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
         labelC.setStyleSheet("QLabel {color: #ffffff}")
-        labelC.move(550, 490)
+        labelC.move(550, 875)
 
         labelD = QtWidgets.QLabel(self)
         labelD.setText(str(self.times) + 'x4')
         labelD.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
-        labelD.setStyleSheet("QLabel {color: #FF9933}")
-        labelD.move(610, 480)
-
-        arrow1_1 = QLabel(self)
-        pixmap = QPixmap('img/metro.png')
-        pixmap = pixmap.scaledToWidth(30)
-        arrow1_1.setPixmap(pixmap)
-        arrow1_1.move(910, 480)
+        labelD.setStyleSheet("QLabel {color: #444444}")
+        labelD.move(610, 870)
 
         labelE = QtWidgets.QLabel(self)
         labelE.setText('Tempo ')
         labelE.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
         labelE.setStyleSheet("QLabel {color: #ffffff}")
-        labelE.move(950, 490)
+        labelE.move(950, 875)
 
         labelF = QtWidgets.QLabel(self)
         labelF.setText(str(self.tempo) + 'bpm')
         labelF.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
-        labelF.setStyleSheet("QLabel {color: #FF9933}")
-        labelF.move(1030, 480)
+        labelF.setStyleSheet("QLabel {color: #444444}")
+        labelF.move(1030, 870)
 
         labelG = QtWidgets.QLabel(self)
         labelG.setText('Bar')
         labelG.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
         labelG.setStyleSheet("QLabel {color: #ffffff}")
-        labelG.move(1340, 490)
+        labelG.move(1340, 875)
 
         self.bars = QtWidgets.QLabel(self)
         self.bars.setText('----/----')
         self.bars.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
         self.bars.setStyleSheet("QLabel {color: #aa0000}")
-        self.bars.move(1400, 480)
-
-        # self.loading = QMovie("img/loading.gif")
-        # self.loading.frameChanged.connect(self.repaint)
-        # self.loading.setScaledSize(QtCore.QSize(70, 70))
-        # self.loading.start()
-
-        self.wait = QtWidgets.QLabel(self)
-        self.wait.setText('...thinking...           ')
-        self.wait.setStyleSheet("QLabel {color: #aa0000}")
-        self.wait.setFont(QtGui.QFont("Arial", 100, QtGui.QFont.Bold))
-        self.wait.move(500, 200)
+        self.bars.move(1400, 870)
 
         self.roles = QLabel(self)
-        self.pixmap1 = QPixmap('img/aj_icon.png')
-        self.roles.setGeometry(QtCore.QRect(700, 280, 200, 200))
+        self.pixmap1 = QPixmap('img/avatar.png')
         self.roles.setPixmap(self.pixmap1)
+        self.roles.move(400, 180)
 
-        self.pixmap2 = QPixmap('img/user_icon.png')
+        self.wait = QtWidgets.QLabel(self)
+        self.wait.setText('          ...Let me think...          ')
+        self.wait.setStyleSheet("QLabel {color: #00aa00}")
+        self.wait.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
+        self.wait.move(660, 610)
+
+        self.wait2 = QtWidgets.QLabel(self)
+        self.wait2.setText('             Humm...      ')
+        self.wait2.setStyleSheet("QLabel {color: #00aa00}")
+        self.wait2.setFont(QtGui.QFont("Arial", 25, QtGui.QFont.Bold))
+        self.wait2.move(800, 240)
 
         button_exit = QPushButton('', self)
-        button_exit.setStyleSheet("background-color: rgb(30,30,30);")
+        button_exit.setStyleSheet("background-color: #dddddd;")
         button_exit.move(1645, 5)
         button_exit.resize(10, 10)
         button_exit.clicked.connect(self.quit_aj)
 
         num_chords = self.karaoke_bars
         ini_x = 50
-        ini_y = 60
+        ini_y = 30
 
         for c in range(0, num_chords):
             self.chords.append(QtWidgets.QLabel(self))
             self.chords[-1].setText('          ')
             self.chords[-1].setFont(QtGui.QFont("Arial", 40, QtGui.QFont.Bold))
-            self.chords[c].setStyleSheet("QLabel {color: #aa0000; border: 2px solid #555555;}")
+            self.chords[c].setStyleSheet("QLabel {background-color: #ffffff; color: #ffffff; border: 2px solid #cccccc;}")
             self.chords[-1].resize(130, 70)
             self.chords[-1].move(ini_x, ini_y)
             ini_x += 130
             if c == 11:
                 ini_x = 50
-                ini_y = 130
+                ini_y = 100
 
         self.show()
 
-    # def paintEvent(self, event):
-    #
-    #     ref_x = 750
-    #     ref_y = 340
-    #     currentFrame = self.loading.currentPixmap()
-    #     frameRect = currentFrame.rect()
-    #     frameRect.moveCenter(self.rect().center())
-    #     if frameRect.intersects(event.rect()):
-    #         painter = QPainter(self)
-    #         painter.drawPixmap(ref_x, ref_y, currentFrame)
 
     @pyqtSlot()
     def quit_aj(self):

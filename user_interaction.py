@@ -75,28 +75,26 @@ def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, roles):
         ap.chords[c].setFont(QtGui.QFont("Arial", 30))
 
         if roles[c] == 'aj':
-             ap.chords[c].setStyleSheet("QLabel {color: #777777; border: 2px solid #777777;}")
+             ap.chords[c].setStyleSheet("QLabel {background-color: #ffffff; color: #FF93EE; border: 2px solid #FF93EE;}")
 
         if roles[c] == 'user':
-            ap.chords[c].setStyleSheet("QLabel {color: #00aa00; border: 2px solid #00aa00;}")
+            ap.chords[c].setStyleSheet("QLabel {background-color: #ffffff; color: #00CFF9; border: 2px solid #00CFF9;}")
 
         if c == bar_karaoke:
-            ap.chords[c].setStyleSheet("QLabel {color: #aa0000; border: 2px solid #aa0000;}")
+            ap.chords[c].setStyleSheet("QLabel {background-color: #cccccc; color: #aa0000; border: 2px solid #aa0000;}")
             ap.chords[c].setFont(QtGui.QFont("Arial", 45, QtGui.QFont.Bold))
 
             if roles[c] == 'aj':
-                ap.wait.setText('                       AJ is soloing...')
-                ap.wait.setStyleSheet("QLabel {color: #555555}")
-                ap.wait.setFont(QtGui.QFont("Arial", 30))
-                ap.roles.setPixmap(ap.pixmap1)
+                ap.wait2.setText(' You may join, but...')
+                ap.wait.setText("  I'm the main player now...      ")
+                ap.wait.setStyleSheet("QLabel {color: #FF93EE}")
+                ap.wait.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
 
             if roles[c] == 'user':
-                ap.wait.setText(' You solo now!')
-                ap.wait.setStyleSheet("QLabel {color: #00aa00}")
-                ap.wait.setFont(QtGui.QFont("Arial", 80))
-                ap.roles.setPixmap(ap.pixmap2)
-
-    #ap.loading.setScaledSize(QtCore.QSize(1, 1))
+                ap.wait2.setText('                Hey! ')
+                ap.wait.setText("You're the main player now!")
+                ap.wait.setStyleSheet("QLabel {color: #00CFF9}")
+                ap.wait.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
 
     start_timer(timer_func, 0)
     app.exec()
