@@ -27,7 +27,7 @@ class AppInfo(QWidget):
         palette.setBrush(QPalette.Window, QBrush(sImage))
         self.setPalette(palette)
 
-        self.title = 'Info about the current jam'
+        self.title = 'AJ - The Artificial Jammer'
         self.score = 0
         self.left = 5
         self.top = 5
@@ -112,10 +112,20 @@ class AppInfo(QWidget):
         self.wait.move(660, 610)
 
         self.wait2 = QtWidgets.QLabel(self)
-        self.wait2.setText('             Humm...      ')
+        self.wait2.setText('             Humm...          ')
         self.wait2.setStyleSheet("QLabel {color: #00aa00}")
         self.wait2.setFont(QtGui.QFont("Arial", 25, QtGui.QFont.Bold))
         self.wait2.move(800, 240)
+
+        self.roles = QLabel(self)
+        self.pixmap1 = QPixmap('img/sign1.png')
+        self.roles.setPixmap(self.pixmap1)
+        self.roles.move(50, 130)
+
+        self.roles = QLabel(self)
+        self.pixmap1 = QPixmap('img/sign2.png')
+        self.roles.setPixmap(self.pixmap1)
+        self.roles.move(1300, 130)
 
         button_exit = QPushButton('', self)
         button_exit.setStyleSheet("background-color: #dddddd;")

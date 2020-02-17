@@ -3,7 +3,7 @@ import live
 import os
 import time
 
-def go_live_ableton(song, short=False):
+def go_live_ableton(song, short=False, play=True):
 
     try:
 
@@ -16,19 +16,20 @@ def go_live_ableton(song, short=False):
                                  song.pitch_labels,
                                  song.scale_mode)
 
-        os.system('all_params='
-                  + str(song.preset)
-                  + ' osascript as_open.scpt')
+        if play:
+            os.system('all_params='
+                      + str(song.preset)
+                      + ' osascript as_open.scpt')
 
-        time.sleep(0.5)
+            time.sleep(0.5)
 
-        set = live.Set()
-        set.scan(scan_devices=True)
-        set.tempo = song.tempo
+            set = live.Set()
+            set.scan(scan_devices=True)
+            set.tempo = song.tempo
 
-        # play all tracks
-        for t in set.tracks:
-            t.clips[0].play()
+            # play all tracks
+            for t in set.tracks:
+                t.clips[0].play()
 
         # wait for song to finish playing: complete or 5 seconds only
         if not short:
@@ -52,17 +53,17 @@ def go_live_ableton(song, short=False):
         else:
             time.sleep(5)
 
-        os.system('osascript as_focus.scpt')
-        for t in set.tracks:
-            t.clips[0].stop()
+        if play:
+            os.system('osascript as_focus.scpt')
+            for t in set.tracks:
+                t.clips[0].stop()
 
-        os.system('osascript as_close1.scpt')
+            os.system('osascript as_close1.scpt')
 
-        time.sleep(0.5)
+            time.sleep(0.5)
 
         return True
 
     except:
-
         os.system('osascript as_close2.scpt')
         return False

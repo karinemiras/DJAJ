@@ -11,7 +11,7 @@ class AppScore(QWidget):
     def __init__(self):
         super().__init__()
         super().setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-        self.title = 'Click on the faces to evaluate the previous jam'
+        self.title = 'Click on the faces to evaluate the music'
         self.score = 0
         self.left = 5
         self.top = 5
