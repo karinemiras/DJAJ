@@ -107,13 +107,13 @@ class AppInfo(QWidget):
 
         self.wait = QtWidgets.QLabel(self)
         self.wait.setText('          ...Let me think...          ')
-        self.wait.setStyleSheet("QLabel {color: #00aa00}")
+        self.wait.setStyleSheet("QLabel {color: #FF93EE}")
         self.wait.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
         self.wait.move(660, 610)
 
         self.wait2 = QtWidgets.QLabel(self)
         self.wait2.setText('             Humm...          ')
-        self.wait2.setStyleSheet("QLabel {color: #00aa00}")
+        self.wait2.setStyleSheet("QLabel {color: #FF93EE}")
         self.wait2.setFont(QtGui.QFont("Arial", 25, QtGui.QFont.Bold))
         self.wait2.move(800, 240)
 

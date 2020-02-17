@@ -38,13 +38,13 @@ class AppScore(QWidget):
 
         self.wait = QtWidgets.QLabel(self)
         self.wait.setText('         Did you like the music!?     ')
-        self.wait.setStyleSheet("QLabel {color: #00aa00}")
+        self.wait.setStyleSheet("QLabel {color: #FF93EE}")
         self.wait.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
         self.wait.move(320, 450)
 
         self.wait2 = QtWidgets.QLabel(self)
         self.wait2.setText('             So...      ')
-        self.wait2.setStyleSheet("QLabel {color: #00aa00}")
+        self.wait2.setStyleSheet("QLabel {color: #FF93EE}")
         self.wait2.setFont(QtGui.QFont("Arial", 25, QtGui.QFont.Bold))
         self.wait2.move(520, 80)
 

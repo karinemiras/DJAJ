@@ -88,12 +88,14 @@ def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, roles):
                 ap.wait2.setText('    You may join, but...')
                 ap.wait.setText("  I'm the main player now...      ")
                 ap.wait.setStyleSheet("QLabel {color: #FF93EE}")
+                ap.wait2.setStyleSheet("QLabel {color: #FF93EE}")
                 ap.wait.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
 
             if roles[c] == 'user':
                 ap.wait2.setText('            Hey! Play! ')
                 ap.wait.setText("You're the main player now!")
                 ap.wait.setStyleSheet("QLabel {color: #00CFF9}")
+                ap.wait2.setStyleSheet("QLabel {color: #00CFF9}")
                 ap.wait.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
 
     start_timer(timer_func, 0)
