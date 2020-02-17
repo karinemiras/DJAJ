@@ -54,49 +54,50 @@ class AppInfo(QWidget):
 
         labelA = QtWidgets.QLabel(self)
         labelA.setText('Key')
-        labelA.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
+        labelA.setFont(QtGui.QFont("Chalkduster", 20, QtGui.QFont.Bold))
         labelA.setStyleSheet("QLabel {color: #ffffff}")
         labelA.move(160, 875)
 
         labelB = QtWidgets.QLabel(self)
         labelB.setText(str(self.pitch_labels[self.key]) + ' ' + self.scale_mode)
-        labelB.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
+        labelB.setFont(QtGui.QFont("Chalkduster", 30, QtGui.QFont.Bold))
         labelB.setStyleSheet("QLabel {color: #444444}")
+       # labelB.resize(30,30)
         labelB.move(210, 870)
 
         labelC = QtWidgets.QLabel(self)
         labelC.setText('Time ')
-        labelC.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
+        labelC.setFont(QtGui.QFont("Chalkduster", 20, QtGui.QFont.Bold))
         labelC.setStyleSheet("QLabel {color: #ffffff}")
         labelC.move(550, 875)
 
         labelD = QtWidgets.QLabel(self)
         labelD.setText(str(self.times) + 'x4')
-        labelD.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
+        labelD.setFont(QtGui.QFont("Chalkduster", 30, QtGui.QFont.Bold))
         labelD.setStyleSheet("QLabel {color: #444444}")
         labelD.move(610, 870)
 
         labelE = QtWidgets.QLabel(self)
         labelE.setText('Tempo ')
-        labelE.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
+        labelE.setFont(QtGui.QFont("Chalkduster", 20, QtGui.QFont.Bold))
         labelE.setStyleSheet("QLabel {color: #ffffff}")
         labelE.move(950, 875)
 
         labelF = QtWidgets.QLabel(self)
         labelF.setText(str(self.tempo) + 'bpm')
-        labelF.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
+        labelF.setFont(QtGui.QFont("Chalkduster", 30, QtGui.QFont.Bold))
         labelF.setStyleSheet("QLabel {color: #444444}")
         labelF.move(1030, 870)
 
         labelG = QtWidgets.QLabel(self)
         labelG.setText('Bar')
-        labelG.setFont(QtGui.QFont("Arial", 20, QtGui.QFont.Bold))
+        labelG.setFont(QtGui.QFont("Chalkduster", 20, QtGui.QFont.Bold))
         labelG.setStyleSheet("QLabel {color: #ffffff}")
         labelG.move(1340, 875)
 
         self.bars = QtWidgets.QLabel(self)
         self.bars.setText('----/----')
-        self.bars.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
+        self.bars.setFont(QtGui.QFont("Chalkduster", 30, QtGui.QFont.Bold))
         self.bars.setStyleSheet("QLabel {color: #aa0000}")
         self.bars.move(1400, 870)
 
@@ -106,15 +107,15 @@ class AppInfo(QWidget):
         self.roles.move(400, 180)
 
         self.wait = QtWidgets.QLabel(self)
-        self.wait.setText('          ...Let me think...          ')
+        self.wait.setText('    ...Let me think...          ')
         self.wait.setStyleSheet("QLabel {color: #FF93EE}")
-        self.wait.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
+        self.wait.setFont(QtGui.QFont("Chalkduster", 30, QtGui.QFont.Bold))
         self.wait.move(660, 610)
 
         self.wait2 = QtWidgets.QLabel(self)
-        self.wait2.setText('             Humm...          ')
+        self.wait2.setText('       Humm...          ')
         self.wait2.setStyleSheet("QLabel {color: #FF93EE}")
-        self.wait2.setFont(QtGui.QFont("Arial", 25, QtGui.QFont.Bold))
+        self.wait2.setFont(QtGui.QFont("Chalkduster", 25, QtGui.QFont.Bold))
         self.wait2.move(800, 240)
 
         self.roles = QLabel(self)
@@ -129,7 +130,7 @@ class AppInfo(QWidget):
 
         button_exit = QPushButton('', self)
         button_exit.setStyleSheet("background-color: #dddddd;")
-        button_exit.move(1645, 5)
+        button_exit.move(1645, 900)
         button_exit.resize(10, 10)
         button_exit.clicked.connect(self.quit_aj)
 
@@ -140,7 +141,7 @@ class AppInfo(QWidget):
         for c in range(0, num_chords):
             self.chords.append(QtWidgets.QLabel(self))
             self.chords[-1].setText('          ')
-            self.chords[-1].setFont(QtGui.QFont("Arial", 40, QtGui.QFont.Bold))
+            self.chords[-1].setFont(QtGui.QFont("Chalkduster", 40, QtGui.QFont.Bold))
             self.chords[c].setStyleSheet("QLabel {background-color: #ffffff; color: #ffffff; border: 2px solid #cccccc;}")
             self.chords[-1].resize(130, 70)
             self.chords[-1].move(ini_x, ini_y)

@@ -30,22 +30,21 @@ class AppScore(QWidget):
         palette.setBrush(QPalette.Window, QBrush(sImage))
         self.setPalette(palette)
 
-
         self.roles = QLabel(self)
         self.pixmap1 = QPixmap('img/avatar.png')
         self.roles.setPixmap(self.pixmap1)
         self.roles.move(100, 20)
 
         self.wait = QtWidgets.QLabel(self)
-        self.wait.setText('         Did you like the music!?     ')
+        self.wait.setText('  Did you like our music?     ')
         self.wait.setStyleSheet("QLabel {color: #FF93EE}")
-        self.wait.setFont(QtGui.QFont("Arial", 30, QtGui.QFont.Bold))
+        self.wait.setFont(QtGui.QFont("Chalkduster", 30, QtGui.QFont.Bold))
         self.wait.move(320, 450)
 
         self.wait2 = QtWidgets.QLabel(self)
-        self.wait2.setText('             So...      ')
+        self.wait2.setText('        So...      ')
         self.wait2.setStyleSheet("QLabel {color: #FF93EE}")
-        self.wait2.setFont(QtGui.QFont("Arial", 25, QtGui.QFont.Bold))
+        self.wait2.setFont(QtGui.QFont("Chalkduster", 25, QtGui.QFont.Bold))
         self.wait2.move(520, 80)
 
         button1 = QPushButton('', self)
@@ -85,7 +84,7 @@ class AppScore(QWidget):
 
         button_exit = QPushButton('', self)
         button_exit.setStyleSheet("background-color: rgb(200,200,200);")
-        button_exit.move(1660, 10)
+        button_exit.move(1660, 900)
         button_exit.resize(5, 5)
         button_exit.clicked.connect(self.quit_aj)
 
