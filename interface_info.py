@@ -107,13 +107,13 @@ class AppInfo(QWidget):
         self.roles.move(400, 180)
 
         self.wait = QtWidgets.QLabel(self)
-        self.wait.setText('    ...Let me think...          ')
+        self.wait.setText('  First, let me think...          ')
         self.wait.setStyleSheet("QLabel {color: #FF93EE}")
         self.wait.setFont(QtGui.QFont("Chalkduster", 30, QtGui.QFont.Bold))
         self.wait.move(660, 610)
 
         self.wait2 = QtWidgets.QLabel(self)
-        self.wait2.setText('       Humm...          ')
+        self.wait2.setText('        Hmm...          ')
         self.wait2.setStyleSheet("QLabel {color: #FF93EE}")
         self.wait2.setFont(QtGui.QFont("Chalkduster", 25, QtGui.QFont.Bold))
         self.wait2.move(800, 240)

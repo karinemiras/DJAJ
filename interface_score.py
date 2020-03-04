@@ -42,10 +42,11 @@ class AppScore(QWidget):
         self.wait.move(320, 450)
 
         self.wait2 = QtWidgets.QLabel(self)
-        self.wait2.setText('        So...      ')
+
+        self.wait2.setText('   Thanks for \n   participating!')
         self.wait2.setStyleSheet("QLabel {color: #FF93EE}")
         self.wait2.setFont(QtGui.QFont("Chalkduster", 25, QtGui.QFont.Bold))
-        self.wait2.move(520, 80)
+        self.wait2.move(520, 60)
 
         button1 = QPushButton('', self)
         button1.setStyleSheet('border-image: url(img/f1.png);')
