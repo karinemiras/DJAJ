@@ -7,14 +7,15 @@ def go_live_ableton(song, short=False, play=True):
 
     try:
 
-        ap, app = show_song_info(0,
-                                 song.times,
-                                 song.beat,
-                                 song.tempo,
-                                 song.key,
-                                 song.karaoke_bars,
-                                 song.pitch_labels,
-                                 song.scale_mode)
+        if not short:
+            ap, app = show_song_info(0,
+                                     song.times,
+                                     song.beat,
+                                     song.tempo,
+                                     song.key,
+                                     song.karaoke_bars,
+                                     song.pitch_labels,
+                                     song.scale_mode)
 
         if play:
             os.system('all_params='
@@ -51,7 +52,7 @@ def go_live_ableton(song, short=False, play=True):
                     bar_karaoke = 0
 
         else:
-            time.sleep(5)
+            time.sleep(10)
 
         if play:
             os.system('osascript as_focus.scpt')

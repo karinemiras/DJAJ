@@ -160,6 +160,7 @@ class Song:
         self.scale_mode = random.choice(self.scale_modes)
         self.scale_type = random.choice(self.scale_types)
         self.preset = random.choice(self.presets)
+        print(self.preset)
         if self.times is None:
             self.times = random.choice(self.times_pool)
         if self.progression_type is None:
