@@ -8,14 +8,13 @@ from midiutil import MIDIFile
 import math
 import numpy as np
 import random
-import pprint
-import sys
+
 
 class Song:
 
     def __init__(self, _song_id='',
                  _num_bars=24,
-                 _presets=range(1, 51+1, 1),
+                 _presets=[1, 2, 8, 11, 15, 16, 17, 18, 22, 23],
                  _tempo_pool={'min': 90, 'mean': 130, 'std': 20, 'max': 180},
                  _silent_bars_range=[0.1, 0.2],
                  _user_solo=True):
@@ -160,7 +159,6 @@ class Song:
         self.scale_mode = random.choice(self.scale_modes)
         self.scale_type = random.choice(self.scale_types)
         self.preset = random.choice(self.presets)
-        print(self.preset)
         if self.times is None:
             self.times = random.choice(self.times_pool)
         if self.progression_type is None:

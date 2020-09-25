@@ -3,11 +3,14 @@ import live
 import os
 import time
 
-def go_live_ableton(song, short=False, play=True):
+
+def go_live_ableton(song, load_in_ableton=True, show_visuals=True):
+
+    short = False
 
     try:
 
-        if not short:
+        if show_visuals:
             ap, app = show_song_info(0,
                                      song.times,
                                      song.beat,
@@ -17,7 +20,7 @@ def go_live_ableton(song, short=False, play=True):
                                      song.pitch_labels,
                                      song.scale_mode)
 
-        if play:
+        if load_in_ableton:
             os.system('all_params='
                       + str(song.preset)
                       + ' osascript as_open.scpt')
@@ -38,11 +41,13 @@ def go_live_ableton(song, short=False, play=True):
             chords_sequence = 0
 
             for bar in range(0+1, song.num_bars+1):
-                ap, app, delay_of_timer = update_chords_label(ap, app, bar,
-                                                              song.num_bars,
-                                                              song.karaoke_chords[chords_sequence],
-                                                              bar_karaoke,
-                                                              song.karaoke_roles[chords_sequence])
+                delay_of_timer = 0
+                if show_visuals:
+                    ap, app, delay_of_timer = update_chords_label(ap, app, bar,
+                                                                  song.num_bars,
+                                                                  song.karaoke_chords[chords_sequence],
+                                                                  bar_karaoke,
+                                                                  song.karaoke_roles[chords_sequence])
 
                 time.sleep((song.get_song_duration() / song.num_bars)-delay_of_timer)
                 bar_karaoke += 1
@@ -52,9 +57,9 @@ def go_live_ableton(song, short=False, play=True):
                     bar_karaoke = 0
 
         else:
-            time.sleep(10)
+            time.sleep(5)
 
-        if play:
+        if load_in_ableton:
             os.system('osascript as_focus.scpt')
             for t in set.tracks:
                 t.clips[0].stop()

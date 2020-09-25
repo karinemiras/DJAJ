@@ -1,0 +1,68 @@
+Installation for mac os catalina
+===============================
+these instructions regard the full installation of the system, including the evolutionary layer with user interaction (full_experiment.py)
+note that not every part of the installation is needed if you wish to simply generate the compositions (DEMO.py)
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Basic steps...
+----------------
+
+install python3 and numpy
+
+pip3 install MIDIUtil
+
+pip3 install midi2audio
+
+ln -s /path/to/my/sound_font.sf2 ~/.fluidsynth/default_sound_font.sf2
+
+
+
+Intermediate steps...
+-----------------------
+
+Unzip the presets file and update its path in as_open applescript (I'm providing only some of my presets, but you can create many more yourself!)
+
+brew install liblo or liblo >= 0.27 [http://liblo.sourceforge.net/]
+
+Pip3 install cython
+
+Pip3 install pyliblo
+
+pip3 install pylive
+
+download/install >> https://www.ableton.com/en/products/live-lite/
+
+download/install >> https://github.com/ideoforms/LiveOSC
+https://livecontrol.q3f.org/ableton-liveapi/liveosc/
+
+Live should normally be running on localhost, with LiveOSC enabled as a Control Surface.
+https://www.native-instruments.com/en/download/3UDHyqSYnB/
+
+
+
+Advanced steps...
+-----------------
+
+pip3 install deap
+
+Pip3 install matplotlib
+
+pip3 install PyQt5
+
+Create ‘experiments’ folder into the root
+
+Add Utilities/Script Editor into the list in System preferences >> Security and Privacy >> Accessibility
+
+Deactivate any sleep mode ou screensaver of the OS
+
+
+
+If you wanna use Kontakt for special presets...
+-------------------------------------------------
+
+Buy and install Kontakt
+
+Set kontakt pluggin in ableton as vst
+
+

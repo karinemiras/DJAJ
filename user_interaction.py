@@ -103,3 +103,4 @@ def update_chords_label(ap, app, bar, bars, chords, bar_karaoke, roles):
     delay_of_timer = 1
 
     return ap, app, delay_of_timer
+
