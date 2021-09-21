@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser()
 
 # choose 'all' or 'random'
 parser.add_argument('--type', default='random', help='type of demo to play')
-parser.add_argument('--show_visuals', default=True, help='show the ajs graphicals')
+parser.add_argument('--show_visuals', default=False, help='show the ajs graphicals')
 parser.add_argument('--load_in_ableton', default=True, help='load composition from midi file generated into an ableton preset')
 args = parser.parse_args()
 
@@ -20,7 +20,7 @@ if args.type == 'all':
     demos_styles = Song('').presets
 
 # just choose some
-#demos_styles = [2]
+demos_styles = [3]
 
 for s in demos_styles:
     song = Song()
@@ -30,6 +30,7 @@ for s in demos_styles:
     song.build_midi()
     song.build_karaoke()
     song.export_midi('current_song_all')
+    print(song.tempo)
 
     if not (args.load_in_ableton is False and args.show_visuals is False):
         went_live = False

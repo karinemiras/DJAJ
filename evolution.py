@@ -29,7 +29,7 @@ class Evolution:
                  _timeout=10,
                  _num_bars=24,
                  _presets=range(1, 51 + 1, 1),
-                 _tempo_pool={'min': 90, 'mean': 130, 'std': 20, 'max': 180},
+                 _tempo_pool={'min': 120, 'mean': 150, 'std': 20, 'max': 170},
                  _silent_bars_range=[0.1, 0.2],
                  _go_live=True,
                  _infinite_generations=False,
@@ -184,9 +184,9 @@ class Evolution:
         print('-- evaluated song '+individual[0].song_id + ', quality: '+str(fitness_quality))
 
         # at every 10 individuals, stop the system to be restarted (trying to avoid qt freezing)
-        if int(individual[0].song_id) % 10 == 0:
-            print('safe stop...')
-            sys.exit()
+        # if int(individual[0].song_id) % 10 == 0:
+        #     print('safe stop...')
+        #     sys.exit()
 
     def replicate_mutate(self, individual):
         offspring = copy.deepcopy(individual)

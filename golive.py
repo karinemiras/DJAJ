@@ -2,6 +2,7 @@ from user_interaction import *
 import live
 import os
 import time
+import traceback
 
 
 def go_live_ableton(song, load_in_ableton=True, show_visuals=True):
@@ -25,7 +26,7 @@ def go_live_ableton(song, load_in_ableton=True, show_visuals=True):
                       + str(song.preset)
                       + ' osascript as_open.scpt')
 
-            time.sleep(0.5)
+            time.sleep(1)
 
             set = live.Set()
             set.scan(scan_devices=True)
@@ -57,19 +58,17 @@ def go_live_ableton(song, load_in_ableton=True, show_visuals=True):
                     bar_karaoke = 0
 
         else:
-            time.sleep(5)
+
+            time.sleep(2)
 
         if load_in_ableton:
             os.system('osascript as_focus.scpt')
+
             for t in set.tracks:
                 t.clips[0].stop()
 
-            os.system('osascript as_close1.scpt')
-
-            time.sleep(0.5)
-
         return True
 
-    except:
-        os.system('osascript as_close2.scpt')
-        return False
+    except Exception as error:
+        print('ERROR: {}'.format(traceback.format_exc()))
+        time.sleep(1)

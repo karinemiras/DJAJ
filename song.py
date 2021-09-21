@@ -2,7 +2,7 @@
 Author: Karine Miras - 9/2019
 """
 
-from midi2audio import FluidSynth
+#from midi2audio import FluidSynth
 from midiutil import MIDIFile
 
 import math
@@ -13,9 +13,9 @@ import random
 class Song:
 
     def __init__(self, _song_id='',
-                 _num_bars=24,
+                 _num_bars=12,
                  _presets=[1, 2, 8, 11, 15, 16, 17, 18, 22, 23],
-                 _tempo_pool={'min': 90, 'mean': 130, 'std': 20, 'max': 180},
+                 _tempo_pool={'min': 120, 'mean': 150, 'std': 20, 'max': 170},
                  _silent_bars_range=[0.1, 0.2],
                  _user_solo=True):
 
@@ -64,7 +64,7 @@ class Song:
             'harmony': 1,
             'solo': 2
         }
-        self.melody_granularities = [2, 3, 4]
+        self.melody_granularities = [3, 4] #[2, 3, 4]
         # Channels left and right
         self.num_channels = 2
         # Volumes by track
@@ -119,7 +119,6 @@ class Song:
 
         # instruments preset
         self.presets = _presets
-
         #  Minimum and maximum speed in BPM.
         self.tempo_pool = _tempo_pool
 
