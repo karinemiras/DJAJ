@@ -3,7 +3,7 @@ import live
 import os
 import time
 import traceback
-
+import sys
 
 def go_live_ableton(song, load_in_ableton=True, show_visuals=True):
 
@@ -71,4 +71,5 @@ def go_live_ableton(song, load_in_ableton=True, show_visuals=True):
 
     except Exception as error:
         print('ERROR: {}'.format(traceback.format_exc()))
-        time.sleep(1)
+        sys.exit()
+        #time.sleep(1)
