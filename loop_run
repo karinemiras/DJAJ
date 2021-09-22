@@ -3,6 +3,6 @@
 while true
 	do
 	    printf 'start!'
-        python3 experiment_expo.py;
+        python3 full_experiment.py;
 	done
 done

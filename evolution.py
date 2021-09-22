@@ -184,9 +184,9 @@ class Evolution:
         print('-- evaluated song '+individual[0].song_id + ', quality: '+str(fitness_quality))
 
         # at every 10 individuals, stop the system to be restarted (trying to avoid qt freezing)
-        # if int(individual[0].song_id) % 10 == 0:
-        #     print('safe stop...')
-        #     sys.exit()
+        if int(individual[0].song_id) % 40 == 0:
+            print('safe stop...')
+            sys.exit()
 
     def replicate_mutate(self, individual):
         offspring = copy.deepcopy(individual)
